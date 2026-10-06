@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Area weighting of tract estimates</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+<style type="text/css">
+
+div.csl-bib-body { }
+div.csl-entry {
+clear: both;
+}
+.hanging div.csl-entry {
+margin-left:2em;
+text-indent:-2em;
+}
+div.csl-left-margin {
+min-width:2em;
+float:left;
+}
+div.csl-right-inline {
+margin-left:2em;
+padding-left:1em;
+}
+div.csl-indent {
+margin-left: 2em;
+}
+</style>
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Area weighting of tract estimates</h1>
+
+
+<div id="TOC">
+<ul>
+<li><a href="#area-weighting-and-its-assumption" id="toc-area-weighting-and-its-assumption">Area weighting and its
+assumption</a></li>
+<li><a href="#coverage-weights-and-area-shares" id="toc-coverage-weights-and-area-shares">Coverage weights and area
+shares</a></li>
+<li><a href="#how-the-package-chooses-the-weights" id="toc-how-the-package-chooses-the-weights">How the package chooses the
+weights</a></li>
+<li><a href="#measuring-the-areas" id="toc-measuring-the-areas">Measuring the areas</a></li>
+<li><a href="#the-calculation-for-each-site" id="toc-the-calculation-for-each-site">The calculation for each
+site</a></li>
+<li><a href="#recomputing-the-weights-for-one-site" id="toc-recomputing-the-weights-for-one-site">Recomputing the weights
+for one site</a></li>
+<li><a href="#references" id="toc-references">References</a></li>
+</ul>
+</div>
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(catchmentACS)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">library</span>(sf)  <span class="co"># needed to subset the bundled sf objects with [</span></span></code></pre></div>
+<p>A drive-time area is drawn from travel times, and its edge cuts
+across census tracts: the area around a site takes in some tracts whole
+and parts of others. catchmentACS estimates characteristics of the
+people and households in the area, such as the number below the poverty
+level, from the American Community Survey (ACS) estimates for these
+tracts. The weight of each tract is computed from the area it shares
+with the drive-time area. The margins of error of these estimates,
+half-widths of confidence intervals at the 90 percent level by default,
+are derived in
+<code>vignette(&quot;theory-moe-propagation&quot;, package = &quot;catchmentACS&quot;)</code>,
+and the rates are described in
+<code>vignette(&quot;theory-derived-rates&quot;, package = &quot;catchmentACS&quot;)</code>.</p>
+<div id="area-weighting-and-its-assumption" class="section level2">
+<h2>Area weighting and its assumption</h2>
+<p>As in <code>vignette(&quot;methodology&quot;, package = &quot;catchmentACS&quot;)</code>,
+we write
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>I</mi><mi>s</mi></msub><annotation encoding="application/x-tex">I_s</annotation></semantics></math>
+for the drive-time area of site
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>s</mi><annotation encoding="application/x-tex">s</annotation></semantics></math>
+at one drive time and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>T</mi><mi>j</mi></msub><annotation encoding="application/x-tex">T_j</annotation></semantics></math>
+for census tract
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>j</mi><annotation encoding="application/x-tex">j</annotation></semantics></math>.
+The part of the tract inside the drive-time area is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>I</mi><mi>s</mi></msub><mo>∩</mo><msub><mi>T</mi><mi>j</mi></msub></mrow><annotation encoding="application/x-tex">I_s \cap T_j</annotation></semantics></math>,
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">|</mo><mspace width="0.167em"></mspace><mo>⋅</mo><mspace width="0.167em"></mspace><mo stretchy="false" form="postfix">|</mo></mrow><annotation encoding="application/x-tex">\lvert\,\cdot\,\rvert</annotation></semantics></math>
+denotes area. An ACS estimate describes a whole tract, while the
+drive-time area may contain only part of it.</p>
+<p>Area weighting is a simple and widely used way to move counts from
+one set of areas to another. It assumes that whatever a variable counts
+is spread evenly over the tract’s area, which rarely holds in practice
+<span class="citation">(Comber and Zeng 2019, 8)</span>. Let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ρ</mi><mi>j</mi></msub><annotation encoding="application/x-tex">\rho_j</annotation></semantics></math>
+be the number per unit area, in tract
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>T</mi><mi>j</mi></msub><annotation encoding="application/x-tex">T_j</annotation></semantics></math>,
+of whatever the variable counts: people, households, or a subgroup such
+as the people below the poverty level. If
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ρ</mi><mi>j</mi></msub><annotation encoding="application/x-tex">\rho_j</annotation></semantics></math>
+is the same everywhere in the tract, the number in any part
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>
+of the tract is proportional to the area of that part:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mtext mathvariant="normal">number in </mtext><mspace width="0.333em"></mspace></mrow><mi>S</mi><mo>=</mo><msub><mi>ρ</mi><mi>j</mi></msub><mspace width="0.167em"></mspace><mo stretchy="false" form="prefix">|</mo><mi>S</mi><mo stretchy="false" form="postfix">|</mo><mo>=</mo><mo minsize="120%" maxsize="120%" stretchy="true" form="prefix">(</mo><mrow><mtext mathvariant="normal">number in </mtext><mspace width="0.333em"></mspace></mrow><msub><mi>T</mi><mi>j</mi></msub><mo minsize="120%" maxsize="120%" stretchy="true" form="postfix">)</mo><mo>⋅</mo><mfrac><mrow><mo stretchy="false" form="prefix">|</mo><mi>S</mi><mo stretchy="false" form="postfix">|</mo></mrow><mrow><mo stretchy="false" form="prefix">|</mo><msub><mi>T</mi><mi>j</mi></msub><mo stretchy="false" form="postfix">|</mo></mrow></mfrac><mi>.</mi></mrow><annotation encoding="application/x-tex">
+\text{number in } S = \rho_j \, \lvert S \rvert
+= \big(\text{number in } T_j\big) \cdot \frac{\lvert S \rvert}{\lvert T_j \rvert}.
+</annotation></semantics></math></p>
+<p>With
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi><mo>=</mo><msub><mi>I</mi><mi>s</mi></msub><mo>∩</mo><msub><mi>T</mi><mi>j</mi></msub></mrow><annotation encoding="application/x-tex">S = I_s \cap T_j</annotation></semantics></math>,
+the part of a tract count that lies in the drive-time area is the count
+multiplied by the share of the tract’s area inside the drive-time area.
+This share is the coverage weight of the next section.</p>
+<p>Counts, such as the number of people below the poverty level or the
+number of households, can be split this way. Medians and per-person
+values, such as median household income (<code>B19013_001</code>) and
+per capita income (<code>B19301_001</code>), do not add up over area:
+half of a tract does not have half of its per capita income. For these,
+the package averages the tract values with weights proportional to the
+area each tract shares with the drive-time area. This average stands in
+for the median or per-person value of the drive-time area, but its
+weights follow area and ignore how many people live in each tract. It
+can therefore be far from that value when the overlapping tracts differ
+in population density, even if people are spread evenly within each
+tract; the next section gives an example. The margin of error reported
+with such an average describes the sampling error of the average, not
+the difference between it and the drive-time area’s own value, and that
+difference does not shrink as the ACS margins of error do. A rate, such
+as the poverty rate, is the ratio of two counts, and each of the two
+counts is split by area.</p>
+<p>The assumption fails where the people of a tract live on a small part
+of its area. Suppose that 80 percent of a tract is uninhabited woodland
+and that its residents live on the remaining 20 percent. A drive-time
+area that covers all of the woodland and none of the settled part gives
+the tract a coverage weight of 0.8, so it is credited with 80 percent of
+the tract’s residents, although none of them live inside. The error
+grows with how unevenly people are spread within the tracts, as in a
+large rural tract that contains a small town. Methods that use other
+data, such as land cover, to place people within tracts relax the
+assumption <span class="citation">(Comber and Zeng 2019, 3–5)</span>.
+catchmentACS uses area weighting only:
+<code>weight_method = &quot;population&quot;</code> is not implemented yet, and
+using it gives an error.</p>
+</div>
+<div id="coverage-weights-and-area-shares" class="section level2">
+<h2>Coverage weights and area shares</h2>
+<p>Both weights are computed from the overlap area
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">|</mo><msub><mi>I</mi><mi>s</mi></msub><mo>∩</mo><msub><mi>T</mi><mi>j</mi></msub><mo stretchy="false" form="postfix">|</mo></mrow><annotation encoding="application/x-tex">\lvert I_s \cap T_j \rvert</annotation></semantics></math>
+and differ in what it is divided by. The coverage weight of tract
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>j</mi><annotation encoding="application/x-tex">j</annotation></semantics></math>
+divides it by the area of the tract,</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>w</mi><mrow><mi>s</mi><mi>j</mi></mrow><mrow><mi>c</mi><mi>o</mi><mi>v</mi></mrow></msubsup><mo>=</mo><mfrac><mrow><mo stretchy="false" form="prefix">|</mo><msub><mi>I</mi><mi>s</mi></msub><mo>∩</mo><msub><mi>T</mi><mi>j</mi></msub><mo stretchy="false" form="postfix">|</mo></mrow><mrow><mo stretchy="false" form="prefix">|</mo><msub><mi>T</mi><mi>j</mi></msub><mo stretchy="false" form="postfix">|</mo></mrow></mfrac><mspace width="0.278em"></mspace><mo>∈</mo><mspace width="0.278em"></mspace><mo stretchy="false" form="prefix">[</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo stretchy="false" form="postfix">]</mo><mo>,</mo></mrow><annotation encoding="application/x-tex">
+w^{cov}_{sj} = \frac{\lvert I_s \cap T_j \rvert}{\lvert T_j \rvert}
+\;\in\; [0, 1],
+</annotation></semantics></math></p>
+<p>which is 1 when the tract lies wholly inside the drive-time area and
+0 when the two do not overlap. The coverage weights of the overlapping
+tracts need not sum to one, since each is a share of a different tract.
+Their sum adds up the covered fractions of the tracts: two whole tracts
+and half of a third give 2.5, and so do five tracts that are each half
+covered. The column <code>weight_sum</code> of the result reports the
+sum for each count, median, and per-person value.</p>
+<p>The area share of tract
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>j</mi><annotation encoding="application/x-tex">j</annotation></semantics></math>
+divides the overlap area by the total overlap area of the tracts,</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>w</mi><mrow><mi>s</mi><mi>j</mi></mrow><mrow><mi>m</mi><mi>e</mi><mi>a</mi><mi>n</mi></mrow></msubsup><mo>=</mo><mfrac><mrow><mo stretchy="false" form="prefix">|</mo><msub><mi>I</mi><mi>s</mi></msub><mo>∩</mo><msub><mi>T</mi><mi>j</mi></msub><mo stretchy="false" form="postfix">|</mo></mrow><mrow><munder><mo>∑</mo><mi>k</mi></munder><mo stretchy="false" form="prefix">|</mo><msub><mi>I</mi><mi>s</mi></msub><mo>∩</mo><msub><mi>T</mi><mi>k</mi></msub><mo stretchy="false" form="postfix">|</mo></mrow></mfrac><mo>,</mo></mrow><annotation encoding="application/x-tex">
+w^{mean}_{sj} = \frac{\lvert I_s \cap T_j \rvert}{\sum_k \lvert I_s \cap T_k \rvert},
+</annotation></semantics></math></p>
+<p>so the area shares sum to one. These sums, like all sums over tracts
+below, run over the tracts kept for the site, drive time, and variable.
+A tract is kept if its coverage weight is above the argument
+<code>min_weight</code> (see the section on the calculation) and the ACS
+data have a row for it and the variable. The area shares are
+proportional to the coverage weights multiplied by the tract areas,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>w</mi><mrow><mi>s</mi><mi>j</mi></mrow><mrow><mi>m</mi><mi>e</mi><mi>a</mi><mi>n</mi></mrow></msubsup><mo>∝</mo><msubsup><mi>w</mi><mrow><mi>s</mi><mi>j</mi></mrow><mrow><mi>c</mi><mi>o</mi><mi>v</mi></mrow></msubsup><mspace width="0.167em"></mspace><mo stretchy="false" form="prefix">|</mo><msub><mi>T</mi><mi>j</mi></msub><mo stretchy="false" form="postfix">|</mo></mrow><annotation encoding="application/x-tex">w^{mean}_{sj} \propto w^{cov}_{sj}\, \lvert T_j \rvert</annotation></semantics></math>.
+When the tracts have the same area, the area shares are therefore the
+coverage weights divided by their sum.</p>
+<p>A count is estimated by the sum of the tract estimates
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Y</mi><mi>j</mi></msub><annotation encoding="application/x-tex">Y_j</annotation></semantics></math>
+weighted by coverage weights,</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mi>Y</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><mo>=</mo><munder><mo>∑</mo><mi>j</mi></munder><msubsup><mi>w</mi><mrow><mi>s</mi><mi>j</mi></mrow><mrow><mi>c</mi><mi>o</mi><mi>v</mi></mrow></msubsup><mspace width="0.167em"></mspace><msub><mi>Y</mi><mi>j</mi></msub><mo>,</mo></mrow><annotation encoding="application/x-tex">
+\widehat{Y}_s = \sum_j w^{cov}_{sj}\, Y_j ,
+</annotation></semantics></math></p>
+<p>which grows with the part of each tract inside the drive-time area.
+With area shares in place of coverage weights, the result would be an
+average of the tract counts, on the scale of one tract.</p>
+<p>A median or a per-person value is estimated by the average of the
+tract estimates
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>X</mi><mi>j</mi></msub><annotation encoding="application/x-tex">X_j</annotation></semantics></math>
+weighted by area shares,</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mover><mi>X</mi><mo accent="true">‾</mo></mover><mo accent="true">̂</mo></mover><mi>s</mi></msub><mo>=</mo><munder><mo>∑</mo><mi>j</mi></munder><msubsup><mi>w</mi><mrow><mi>s</mi><mi>j</mi></mrow><mrow><mi>m</mi><mi>e</mi><mi>a</mi><mi>n</mi></mrow></msubsup><mspace width="0.167em"></mspace><msub><mi>X</mi><mi>j</mi></msub><mi>.</mi></mrow><annotation encoding="application/x-tex">
+\widehat{\bar X}_s = \sum_j w^{mean}_{sj}\, X_j .
+</annotation></semantics></math></p>
+<p>Because the area shares are nonnegative and sum to one,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mover><mover><mi>X</mi><mo accent="true">‾</mo></mover><mo accent="true">̂</mo></mover><mi>s</mi></msub><annotation encoding="application/x-tex">\widehat{\bar X}_s</annotation></semantics></math>
+is at least the smallest and at most the largest of the tract values. A
+sum of the same values weighted by coverage weights, whose sum can be
+above or below one, can fall outside that range.</p>
+<p>The area shares weight each tract by its overlap area and ignore how
+many people live there. Two made-up tracts show how much this can
+matter. Tract 1 has an area of 1 km², 1,000 residents, and a per capita
+income of 10,000 dollars, and lies wholly inside the drive-time area.
+Tract 2 has an area of 100 km², 1,000 residents, and a per capita income
+of 50,000 dollars, and 10 km² of it lie inside the drive-time area. The
+code below applies the package’s formula for a per-person value to these
+numbers by hand. For comparison, it also computes the per capita income
+of the people inside, on the assumption that within each tract both the
+residents and their income per person are the same everywhere.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>tracts <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>  <span class="at">tract      =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>),</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>  <span class="at">area_km2   =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">100</span>),       <span class="co"># area of the tract</span></span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>  <span class="at">inside_km2 =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">10</span>),        <span class="co"># area of its part inside the drive-time area</span></span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>  <span class="at">residents  =</span> <span class="fu">c</span>(<span class="dv">1000</span>, <span class="dv">1000</span>),</span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a>  <span class="at">income_pc  =</span> <span class="fu">c</span>(<span class="dv">10000</span>, <span class="dv">50000</span>)  <span class="co"># per capita income, dollars</span></span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a>)</span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a>tracts<span class="sc">$</span>w_cov  <span class="ot">&lt;-</span> tracts<span class="sc">$</span>inside_km2 <span class="sc">/</span> tracts<span class="sc">$</span>area_km2         <span class="co"># coverage weight</span></span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a>tracts<span class="sc">$</span>w_mean <span class="ot">&lt;-</span> tracts<span class="sc">$</span>inside_km2 <span class="sc">/</span> <span class="fu">sum</span>(tracts<span class="sc">$</span>inside_km2)  <span class="co"># area share</span></span>
+<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a>tracts</span></code></pre></div>
+<pre><code>#&gt;   tract area_km2 inside_km2 residents income_pc w_cov     w_mean
+#&gt; 1     1        1          1      1000     10000   1.0 0.09090909
+#&gt; 2     2      100         10      1000     50000   0.1 0.90909091</code></pre>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="co"># The package&#39;s formula: the average of the tract values weighted by area shares</span></span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>area_share_average <span class="ot">&lt;-</span> <span class="fu">sum</span>(tracts<span class="sc">$</span>w_mean <span class="sc">*</span> tracts<span class="sc">$</span>income_pc)</span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="co"># The people inside and their per capita income (both assumed even within each tract)</span></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>residents_inside <span class="ot">&lt;-</span> <span class="fu">sum</span>(tracts<span class="sc">$</span>w_cov <span class="sc">*</span> tracts<span class="sc">$</span>residents)</span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>income_inside    <span class="ot">&lt;-</span> <span class="fu">sum</span>(tracts<span class="sc">$</span>w_cov <span class="sc">*</span> tracts<span class="sc">$</span>residents <span class="sc">*</span> tracts<span class="sc">$</span>income_pc) <span class="sc">/</span></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>  residents_inside</span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="fu">c</span>(<span class="at">area_share_average =</span> area_share_average,</span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a>  <span class="at">residents_inside   =</span> residents_inside,</span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a>  <span class="at">income_inside      =</span> income_inside)</span></code></pre></div>
+<pre><code>#&gt; area_share_average   residents_inside      income_inside 
+#&gt;           46363.64            1100.00           13636.36</code></pre>
+<p>The package’s formula gives 46,364 dollars, while the 1,100 people
+inside have a per capita income of 13,636 dollars. Most of the overlap
+area lies in tract 2, but most of the people inside live in tract 1. The
+per capita income of the people inside is their total income divided by
+their number, a ratio of two counts. The area-share average equals it
+when the overlapping tracts have the same number of residents per unit
+area.</p>
+<p>A rate, such as the poverty rate, is estimated by the ratio of two
+coverage-weighted sums of tract estimates,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mi>A</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><mo>=</mo><msub><mo>∑</mo><mi>j</mi></msub><msubsup><mi>w</mi><mrow><mi>s</mi><mi>j</mi></mrow><mrow><mi>c</mi><mi>o</mi><mi>v</mi></mrow></msubsup><mspace width="0.167em"></mspace><msub><mi>A</mi><mi>j</mi></msub></mrow><annotation encoding="application/x-tex">\widehat{A}_s = \sum_j w^{cov}_{sj}\, A_j</annotation></semantics></math>
+for its numerator and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mi>B</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><mo>=</mo><msub><mo>∑</mo><mi>j</mi></msub><msubsup><mi>w</mi><mrow><mi>s</mi><mi>j</mi></mrow><mrow><mi>c</mi><mi>o</mi><mi>v</mi></mrow></msubsup><mspace width="0.167em"></mspace><msub><mi>B</mi><mi>j</mi></msub></mrow><annotation encoding="application/x-tex">\widehat{B}_s = \sum_j w^{cov}_{sj}\, B_j</annotation></semantics></math>
+for its denominator.
+<code>vignette(&quot;theory-derived-rates&quot;, package = &quot;catchmentACS&quot;)</code>
+shows when this ratio is an average of the tract rates, weighted by the
+part of each tract’s denominator inside the drive-time area, and
+describes the margins of error of rates.</p>
+</div>
+<div id="how-the-package-chooses-the-weights" class="section level2">
+<h2>How the package chooses the weights</h2>
+<p>Each row of the results records the kind of estimate in the column
+<code>estimand_family</code> and the weights used in
+<code>weight_basis</code>: coverage weights for counts and rates, and
+area shares for medians and per-person values. The kind is read from the
+ACS code alone, as the help page of <code>cacs_intersect_weight()</code>
+and <code>vignette(&quot;methodology&quot;, package = &quot;catchmentACS&quot;)</code>
+describe. Median age (<code>B01002_001</code>), for instance, is a
+median from a table that the package does not list, so it is added up
+like a count, without a warning.</p>
+<p>For a median, the area-share average is a looser stand-in than for a
+per-person value. Even when the tracts have the same population density,
+an average of tract medians is in general not the median of the combined
+population, which depends on the income distribution in each tract. The
+ACS publishes its 5-year <a href="https://www.census.gov/programs-surveys/acs/data/data-tables.html">detailed
+tables</a> for all areas down to block groups, census tracts included,
+and one of these tables, <code>B19001</code>, gives the number of
+households in 16 income brackets. The package does not use these
+brackets: the area-share average of the tract medians stands in for the
+median of the drive-time area. The brackets themselves can be
+aggregated, because they are counts: asking for <code>B19001_017</code>
+in <code>variables</code> gives the number of households in that bracket
+for the drive-time area, with a coverage-weighted sum like any other
+count. What the package has no function for is turning brackets into a
+median.</p>
+</div>
+<div id="measuring-the-areas" class="section level2">
+<h2>Measuring the areas</h2>
+<p><code>cacs_intersect_weight()</code> computes the overlaps and their
+areas on a flat map. Before measuring any area, it projects the
+drive-time areas and the tracts to EPSG:5070 (NAD83 / Conus Albers) and
+measures all areas there, in square meters. This Albers projection is
+equal-area: the area of a shape on the projected map is its area on the
+reference ellipsoid. Every area in a run is measured on this one
+map.</p>
+<p>A coverage weight is the ratio of two areas within the same tract, so
+it changes little with the way area is measured. EPSG defines this
+projection for the contiguous 48 states. The package checks its own box
+for that scope, drawn around the contiguous United States and the
+District of Columbia with a quarter of a degree to spare. The bounding
+boxes of both inputs must lie between 24.14 and 49.64 degrees north and
+between -125.25 and -66.68 degrees east. Data for Alaska, Hawaii, or
+Puerto Rico give an error.</p>
+</div>
+<div id="the-calculation-for-each-site" class="section level2">
+<h2>The calculation for each site</h2>
+<p>Before it combines anything, <code>cacs_intersect_weight()</code>
+repairs invalid geometries in both inputs (see below) and skips, with a
+warning, tracts whose area is zero or not finite. The skipped tracts are
+listed in the <code>skipped_geoids</code> attribute of the result.
+Tracts with a coverage weight at or below <code>min_weight</code> (by
+default <code>1e-6</code>), such as tracts that only touch the edge of
+the area, are dropped before the area shares and the estimates are
+computed.</p>
+<p>The help page of <code>cacs_intersect_weight()</code> lists the steps
+of the calculation. It also describes the single row of <code>NA</code>
+values, with <code>failure_origin = &quot;intersection&quot;</code>, that a site
+and drive time gets when no tract is left or the calculation fails.</p>
+<p>Invalid geometries, such as polygons whose edges cross, are repaired
+with <code>sf::st_make_valid()</code> or, if some remain invalid, with a
+buffer of zero width (<code>sf::st_buffer()</code>), each time with a
+warning. This is done for both inputs and again for the overlaps of each
+pair. Repair can change a shape and its area. A geometry that is still
+invalid after both attempts is replaced by an empty one. An empty tract
+has zero area and is skipped, an empty drive-time area gives its pair
+the row described above, and an empty overlap adds nothing. If every
+geometry of an input is still invalid, the function stops with an
+error.</p>
+</div>
+<div id="recomputing-the-weights-for-one-site" class="section level2">
+<h2>Recomputing the weights for one site</h2>
+<p>The weights and one count for one site can be recomputed from the two
+areas that <code>cacs_intersect_weight()</code> records for each tract
+when <code>keep_tract_audit = TRUE</code>. The data for this example
+ship with the package. In these data, squares of nearly equal size,
+scattered with gaps between them and carrying random ACS values, take
+the place of census tracts. Each site sits at the center of one of the
+squares, and its drive-time areas are circles around it. The ACS values
+are made up, so the numbers below show the arithmetic and not a real
+place. At a drive time of 10 minutes, the circle of site
+<code>AL_SITE_17</code> contains the site’s own square and cuts two
+other squares at its edge. Because of the gaps, the squares cover only a
+small part of the circle; real census tracts tile a state, so for an
+area of this size the sum of the coverage weights there would be far
+larger.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="co"># Data bundled with the package</span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>iso <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">system.file</span>(</span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>  <span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;legacy_2025_isochrones.rds&quot;</span>, <span class="at">package =</span> <span class="st">&quot;catchmentACS&quot;</span></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>))</span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>acs <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">system.file</span>(</span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>  <span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;sample_alabama_subset.rds&quot;</span>, <span class="at">package =</span> <span class="st">&quot;catchmentACS&quot;</span></span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>))</span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a>site_id    <span class="ot">&lt;-</span> <span class="st">&quot;AL_SITE_17&quot;</span></span>
+<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a>drive_time <span class="ot">&lt;-</span> <span class="dv">10</span><span class="dt">L</span></span>
+<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a></span>
+<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a>iso_one <span class="ot">&lt;-</span> iso[</span>
+<span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a>  iso<span class="sc">$</span>site_id <span class="sc">==</span> site_id <span class="sc">&amp;</span> iso<span class="sc">$</span>drive_time_min <span class="sc">==</span> drive_time, ,</span>
+<span id="cb6-14"><a href="#cb6-14" tabindex="-1"></a>  drop <span class="ot">=</span> <span class="cn">FALSE</span></span>
+<span id="cb6-15"><a href="#cb6-15" tabindex="-1"></a>]</span>
+<span id="cb6-16"><a href="#cb6-16" tabindex="-1"></a></span>
+<span id="cb6-17"><a href="#cb6-17" tabindex="-1"></a>weighted <span class="ot">&lt;-</span> <span class="fu">cacs_intersect_weight</span>(</span>
+<span id="cb6-18"><a href="#cb6-18" tabindex="-1"></a>  <span class="at">iso_sf           =</span> iso_one,</span>
+<span id="cb6-19"><a href="#cb6-19" tabindex="-1"></a>  <span class="at">acs_sf           =</span> acs,</span>
+<span id="cb6-20"><a href="#cb6-20" tabindex="-1"></a>  <span class="at">weight_method    =</span> <span class="st">&quot;area&quot;</span>,</span>
+<span id="cb6-21"><a href="#cb6-21" tabindex="-1"></a>  <span class="at">keep_tract_audit =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb6-22"><a href="#cb6-22" tabindex="-1"></a>  <span class="at">verbose          =</span> <span class="cn">FALSE</span></span>
+<span id="cb6-23"><a href="#cb6-23" tabindex="-1"></a>)</span></code></pre></div>
+<p>The <code>cacs_tract_audit</code> attribute of the result lists, for
+each tract that the drive-time area overlaps, the area of the overlap
+(<code>int_area_m2</code>) and the area of the tract
+(<code>tract_area_m2</code>), in square meters on EPSG:5070:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>areas <span class="ot">&lt;-</span> <span class="fu">attr</span>(weighted, <span class="st">&quot;cacs_tract_audit&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>  <span class="fu">select</span>(GEOID, int_area_m2, tract_area_m2) <span class="sc">|&gt;</span></span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(int_area_m2))</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>areas</span></code></pre></div>
+<pre><code>#&gt; # A tibble: 3 × 3
+#&gt;   GEOID       int_area_m2 tract_area_m2
+#&gt;   &lt;chr&gt;             &lt;dbl&gt;         &lt;dbl&gt;
+#&gt; 1 01125001001    9233961.      9233961.
+#&gt; 2 01127001001    1038977.      9233961.
+#&gt; 3 01123001001    1038971.      9233961.</code></pre>
+<p>The coverage weights divide the overlap area by the tract area, and
+the area shares divide it by the total overlap area:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>hand <span class="ot">&lt;-</span> areas <span class="sc">|&gt;</span></span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>    <span class="at">w_cov  =</span> int_area_m2 <span class="sc">/</span> tract_area_m2,        <span class="co"># |I_s n T_j| / |T_j|</span></span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>    <span class="at">w_mean =</span> int_area_m2 <span class="sc">/</span> <span class="fu">sum</span>(int_area_m2)      <span class="co"># |I_s n T_j| / sum_k |I_s n T_k|</span></span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>  )</span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a>hand <span class="sc">|&gt;</span> <span class="fu">select</span>(GEOID, w_cov, w_mean)</span></code></pre></div>
+<pre><code>#&gt; # A tibble: 3 × 3
+#&gt;   GEOID       w_cov w_mean
+#&gt;   &lt;chr&gt;       &lt;dbl&gt;  &lt;dbl&gt;
+#&gt; 1 01125001001 1.00  0.816 
+#&gt; 2 01127001001 0.113 0.0918
+#&gt; 3 01123001001 0.113 0.0918</code></pre>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="fu">c</span>(</span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>  <span class="at">sum_w_cov  =</span> <span class="fu">sum</span>(hand<span class="sc">$</span>w_cov),    <span class="co"># not 1 in general: each has its own denominator</span></span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>  <span class="at">sum_w_mean =</span> <span class="fu">sum</span>(hand<span class="sc">$</span>w_mean)    <span class="co"># 1 by construction</span></span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>)</span></code></pre></div>
+<pre><code>#&gt;  sum_w_cov sum_w_mean 
+#&gt;   1.225033   1.000000</code></pre>
+<p>The coverage weights are 1, 0.113, and 0.113: the site’s own square
+lies wholly inside the circle, and the other two only partly. Their sum,
+1.225, is the overlap area counted in squares, because these three
+squares have the same area; across the whole data set the squares differ
+in area by about five percent.</p>
+<p>The number of people below the poverty level
+(<code>B17001_002</code>) is a count, so the package estimates it by
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mi>Y</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><mo>=</mo><msub><mo>∑</mo><mi>j</mi></msub><msubsup><mi>w</mi><mrow><mi>s</mi><mi>j</mi></mrow><mrow><mi>c</mi><mi>o</mi><mi>v</mi></mrow></msubsup><mspace width="0.167em"></mspace><msub><mi>Y</mi><mi>j</mi></msub></mrow><annotation encoding="application/x-tex">\widehat{Y}_s = \sum_j w^{cov}_{sj}\, Y_j</annotation></semantics></math>.
+The code below takes the three tract estimates from the ACS data and
+forms this sum:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>counts <span class="ot">&lt;-</span> acs <span class="sc">|&gt;</span></span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>  sf<span class="sc">::</span><span class="fu">st_drop_geometry</span>() <span class="sc">|&gt;</span></span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a>  <span class="fu">filter</span>(GEOID <span class="sc">%in%</span> hand<span class="sc">$</span>GEOID, variable <span class="sc">==</span> <span class="st">&quot;B17001_002&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a>  <span class="fu">select</span>(GEOID, <span class="at">Y =</span> estimate)</span>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a></span>
+<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a>hand_total <span class="ot">&lt;-</span> hand <span class="sc">|&gt;</span></span>
+<span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a>  <span class="fu">select</span>(GEOID, w_cov) <span class="sc">|&gt;</span></span>
+<span id="cb13-8"><a href="#cb13-8" tabindex="-1"></a>  <span class="fu">left_join</span>(counts, <span class="at">by =</span> <span class="st">&quot;GEOID&quot;</span>)</span>
+<span id="cb13-9"><a href="#cb13-9" tabindex="-1"></a></span>
+<span id="cb13-10"><a href="#cb13-10" tabindex="-1"></a>hand_total</span></code></pre></div>
+<pre><code>#&gt; # A tibble: 3 × 3
+#&gt;   GEOID       w_cov     Y
+#&gt;   &lt;chr&gt;       &lt;dbl&gt; &lt;dbl&gt;
+#&gt; 1 01125001001 1.00   1020
+#&gt; 2 01127001001 0.113  1104
+#&gt; 3 01123001001 0.113   828</code></pre>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a>hand_Y_hat       <span class="ot">&lt;-</span> <span class="fu">sum</span>(hand_total<span class="sc">$</span>w_cov <span class="sc">*</span> hand_total<span class="sc">$</span>Y)   <span class="co"># sum_j w_cov * Y_j</span></span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>hand_weight_sum  <span class="ot">&lt;-</span> <span class="fu">sum</span>(hand_total<span class="sc">$</span>w_cov)                  <span class="co"># sum_j w_cov</span></span>
+<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a><span class="fu">c</span>(<span class="at">hand_Y_hat =</span> hand_Y_hat, <span class="at">hand_weight_sum =</span> hand_weight_sum)</span></code></pre></div>
+<pre><code>#&gt;      hand_Y_hat hand_weight_sum 
+#&gt;     1237.382230        1.225033</code></pre>
+<p>The row of the package’s result for the same variable has
+<code>estimand_family = &quot;spatial_total&quot;</code> and
+<code>weight_basis = &quot;coverage&quot;</code>:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a>pkg_row <span class="ot">&lt;-</span> weighted <span class="sc">|&gt;</span></span>
+<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a>  <span class="fu">filter</span>(variable <span class="sc">==</span> <span class="st">&quot;B17001_002&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a>  <span class="fu">select</span>(variable, estimate, weight_sum, n_tracts,</span>
+<span id="cb17-4"><a href="#cb17-4" tabindex="-1"></a>         estimand_family, weight_basis)</span>
+<span id="cb17-5"><a href="#cb17-5" tabindex="-1"></a></span>
+<span id="cb17-6"><a href="#cb17-6" tabindex="-1"></a>pkg_row</span></code></pre></div>
+<pre><code>#&gt; # A tibble: 1 × 6
+#&gt;   variable   estimate weight_sum n_tracts estimand_family weight_basis
+#&gt;   &lt;chr&gt;         &lt;dbl&gt;      &lt;dbl&gt;    &lt;int&gt; &lt;chr&gt;           &lt;chr&gt;       
+#&gt; 1 B17001_002    1237.       1.23        3 spatial_total   coverage</code></pre>
+<p>The hand-computed sum, 1,237.4 people, is the <code>estimate</code>
+in the row above, and the sum of the coverage weights, 1.225, is its
+<code>weight_sum</code>. The same two areas are recorded for every tract
+of every site and drive time in the result, so any row can be recomputed
+this way.</p>
+</div>
+<div id="references" class="section level2">
+<h2>References</h2>
+<script>
+// Chrome can leave out a hat that sits over a bar, such as the hat of the
+// estimated average in the formulas above. Written as a spacing character,
+// the hat is always drawn.
+document.querySelectorAll("math mover > mover + mo").forEach(function (mo) {
+  if (mo.textContent === "\u0302") {
+    mo.textContent = "\u02C6";
+  }
+});
+</script>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-comber2019spatial" class="csl-entry">
+Comber, Alexis, and Wen Zeng. 2019. <span>“Spatial Interpolation Using
+Areal Features: A Review of Methods and Opportunities Using New Forms of
+Data with Coded Illustrations.”</span> <em>Geography Compass</em> 13
+(10): e12465. <a href="https://doi.org/10.1111/gec3.12465">https://doi.org/10.1111/gec3.12465</a>.
+</div>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+
+</body>
+</html>

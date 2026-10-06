@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Updating code written for version 0.4</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Updating code written for version 0.4</h1>
+
+
+<div id="TOC">
+<ul>
+<li><a href="#medians-and-per-person-values" id="toc-medians-and-per-person-values">Medians and per-person
+values</a></li>
+<li><a href="#the-year-argument" id="toc-the-year-argument">The
+<code>year</code> argument</a></li>
+<li><a href="#saved-acs-estimates-and-the-census-api-key" id="toc-saved-acs-estimates-and-the-census-api-key">Saved ACS estimates
+and the Census API key</a></li>
+<li><a href="#sites-as-a-plain-data-frame" id="toc-sites-as-a-plain-data-frame">Sites as a plain data
+frame</a></li>
+<li><a href="#the-isochrone-column-when-cacs_run-builds-the-areas" id="toc-the-isochrone-column-when-cacs_run-builds-the-areas">The
+<code>isochrone</code> column when <code>cacs_run()</code> builds the
+areas</a></li>
+<li><a href="#choices-that-are-not-implemented" id="toc-choices-that-are-not-implemented">Choices that are not
+implemented</a></li>
+</ul>
+</div>
+
+<p>catchmentACS 0.5.0 corrects the estimates of medians and per-person
+values and checks some arguments more strictly than 0.4 did. For code
+written for 0.3,
+<code>vignette(&quot;porting-v03-to-v04&quot;, package = &quot;catchmentACS&quot;)</code>
+describes the changes made in 0.4.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(catchmentACS)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">library</span>(sf)  <span class="co"># needed to subset the bundled sf objects with [</span></span></code></pre></div>
+<div id="medians-and-per-person-values" class="section level2">
+<h2>Medians and per-person values</h2>
+<p><code>cacs_run()</code> averages the medians and per-person values of
+three tables of the American Community Survey (ACS) over the census
+tracts that a drive-time area overlaps: median household income
+(<code>B19013_001</code>), median home value (<code>B25077_001</code>),
+and per capita income (<code>B19301_001</code>). A median or per-person
+value from any other table is added up like a count. The weights of the
+average, called area shares, are proportional to the area of each
+tract’s overlap with the drive-time area and sum to one for each site,
+drive time, and variable. Before 0.5.0, they summed to one over all the
+variables of a site and drive time taken together. In a call with more
+than one variable, the estimates computed with these weights were
+therefore too small, and so were their margins of error, the half-widths
+of their confidence intervals (90 percent by default). When every tract
+has a row for each variable, they were smaller by a factor equal to the
+number of variables in the call. Counts and rates are computed with
+other weights and did not change.</p>
+<p>Medians and per-person values computed with 0.4 need to be computed
+again. In a result, they are the rows whose <code>weight_basis</code> is
+<code>&quot;area_mean&quot;</code>. The example below finds them in a run on
+made-up data installed with the package, in which the drive-time areas
+are circles and the ACS estimates are random numbers:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>iso <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">system.file</span>(</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>  <span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;legacy_2025_isochrones.rds&quot;</span>, <span class="at">package =</span> <span class="st">&quot;catchmentACS&quot;</span></span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>))</span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>acs <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">system.file</span>(</span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>  <span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;sample_alabama_subset.rds&quot;</span>, <span class="at">package =</span> <span class="st">&quot;catchmentACS&quot;</span></span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a>))</span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a>site_07 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">site_id =</span> <span class="st">&quot;AL_SITE_07&quot;</span>, <span class="at">lon =</span> <span class="sc">-</span><span class="fl">85.365</span>, <span class="at">lat =</span> <span class="fl">31.655</span>)</span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a>result <span class="ot">&lt;-</span> <span class="fu">cacs_run</span>(</span>
+<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a>  site_07, <span class="at">state =</span> <span class="st">&quot;AL&quot;</span>,</span>
+<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a>  <span class="at">precomputed_isochrones =</span> iso[iso<span class="sc">$</span>site_id <span class="sc">==</span> <span class="st">&quot;AL_SITE_07&quot;</span>, ],</span>
+<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a>  <span class="at">acs =</span> acs, <span class="at">verbose =</span> <span class="cn">FALSE</span></span>
+<span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a>)</span>
+<span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a>tibble<span class="sc">::</span><span class="fu">as_tibble</span>(result) <span class="sc">|&gt;</span></span>
+<span id="cb2-15"><a href="#cb2-15" tabindex="-1"></a>  <span class="fu">filter</span>(weight_basis <span class="sc">==</span> <span class="st">&quot;area_mean&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb2-16"><a href="#cb2-16" tabindex="-1"></a>  <span class="fu">select</span>(drive_time_min, variable, estimate, moe)</span></code></pre></div>
+<pre><code>#&gt; # A tibble: 6 × 4
+#&gt;   drive_time_min variable   estimate    moe
+#&gt;            &lt;int&gt; &lt;chr&gt;         &lt;dbl&gt;  &lt;dbl&gt;
+#&gt; 1              5 B19013_001   68369  16626 
+#&gt; 2              5 B19301_001   16355   2422 
+#&gt; 3             10 B19013_001   68037. 16160.
+#&gt; 4             10 B19301_001   16725.  2356.
+#&gt; 5             15 B19013_001   60498.  7834.
+#&gt; 6             15 B19301_001   25135.  2643.</code></pre>
+</div>
+<div id="the-year-argument" class="section level2">
+<h2>The <code>year</code> argument</h2>
+<p><code>cacs_acs_prefetch()</code> accepts as <code>year</code> only a
+whole number from 2009 to 2024, and so does <code>cacs_run()</code> when
+it downloads the ACS estimates. In 0.4, they accepted any year from 2009
+to the year before the current one and truncated a fractional
+<code>year</code>, such as <code>2023.5</code>. In 0.5.0, a fraction and
+a year after 2024 give an error. When the estimates are supplied through
+<code>acs</code>, <code>cacs_run()</code> only records
+<code>year</code>.</p>
+</div>
+<div id="saved-acs-estimates-and-the-census-api-key" class="section level2">
+<h2>Saved ACS estimates and the Census API key</h2>
+<p><code>cacs_acs_prefetch()</code> reads estimates saved in the cache
+without a Census API key, as it did in 0.4. In 0.5.0, it looks for them
+before sending any request, where 0.4 first asked tidycensus for the
+list of ACS variables and went on if that failed. It needs the key only
+to download: when no saved result matches the call, or with
+<code>force_refresh = TRUE</code>.</p>
+<p>A saved result matches only while the installed versions of R,
+catchmentACS, tidycensus, tigris, and sf stay the same
+(<code>?cacs_acs_prefetch</code>), so copies saved with 0.4 are not
+read. The first call with 0.5.0 downloads the estimates again and needs
+the key. Results that <code>cacs_intersect_weight()</code> saved in the
+cache with 0.4 are not reused either; they are computed again. From
+version 0.6.0 on, saved results are kept only until the R session ends
+unless a cache folder that lasts between sessions is set, and the folder
+used by versions 0.5.1 and earlier is not read (see
+<code>?cacs_cache_dir</code>).</p>
+</div>
+<div id="sites-as-a-plain-data-frame" class="section level2">
+<h2>Sites as a plain data frame</h2>
+<p><code>cacs_isochrone()</code> now also accepts the sites as a base R
+data frame with the columns <code>site_id</code>, <code>lon</code>, and
+<code>lat</code>, like <code>site_07</code> above. In 0.4, it required
+an sf object of points or a tibble, and both are still accepted.</p>
+</div>
+<div id="the-isochrone-column-when-cacs_run-builds-the-areas" class="section level2">
+<h2>The <code>isochrone</code> column when <code>cacs_run()</code>
+builds the areas</h2>
+<p>With <code>output = &quot;list_column&quot;</code> or
+<code>output = &quot;both&quot;</code>, the list-column form of
+<code>cacs_run()</code> has a column <code>isochrone</code>, which holds
+the drive-time area of each row as a one-row sf object. In 0.4, it held
+the areas only when they were supplied through
+<code>precomputed_isochrones</code>, and <code>NULL</code> when
+<code>cacs_run()</code> built them. In 0.5.0 it holds them in both
+cases. A message about the column is shown on every such call, even with
+<code>verbose = FALSE</code>.</p>
+</div>
+<div id="choices-that-are-not-implemented" class="section level2">
+<h2>Choices that are not implemented</h2>
+<p><code>weight_method = &quot;population&quot;</code> is not implemented yet;
+area weighting (<code>&quot;area&quot;</code>, the default) is the only method. In
+0.5.0, <code>cacs_run()</code> gives the error before any step runs,
+with the class <code>catchmentACS_error_credential</code>. In 0.4, the
+error came at the intersection step, after the areas and the ACS
+estimates were ready, when <code>bg_pop_sf</code> was supplied; without
+<code>bg_pop_sf</code>, it came at the start, with the class
+<code>catchmentACS_error_schema</code>.</p>
+<p>Choosing <code>provider = &quot;mapbox&quot;</code> or
+<code>provider = &quot;r5r&quot;</code> to build the areas, or a
+<code>rates</code> list other than <code>cacs_acs_default_rates</code>,
+the list of the five built-in rates, gives an error, as it did in
+0.4.</p>
+</div>
+
+
+
+<!-- code folding -->
+
+
+
+</body>
+</html>

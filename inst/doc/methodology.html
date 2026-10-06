@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>How the estimates are computed</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+<style type="text/css">
+
+div.csl-bib-body { }
+div.csl-entry {
+clear: both;
+}
+.hanging div.csl-entry {
+margin-left:2em;
+text-indent:-2em;
+}
+div.csl-left-margin {
+min-width:2em;
+float:left;
+}
+div.csl-right-inline {
+margin-left:2em;
+padding-left:1em;
+}
+div.csl-indent {
+margin-left: 2em;
+}
+</style>
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">How the estimates are computed</h1>
+
+
+<div id="TOC">
+<ul>
+<li><a href="#from-tract-estimates-to-drive-time-areas" id="toc-from-tract-estimates-to-drive-time-areas">From tract estimates
+to drive-time areas</a></li>
+<li><a href="#the-symbols-the-weights-and-the-estimates" id="toc-the-symbols-the-weights-and-the-estimates">The symbols, the
+weights, and the estimates</a></li>
+<li><a href="#kinds-of-estimate-and-their-weights" id="toc-kinds-of-estimate-and-their-weights">Kinds of estimate and their
+weights</a></li>
+<li><a href="#a-worked-example-with-both-weights" id="toc-a-worked-example-with-both-weights">A worked example with both
+weights</a></li>
+<li><a href="#margins-of-error" id="toc-margins-of-error">Margins of
+error</a></li>
+<li><a href="#limitations" id="toc-limitations">Limitations</a></li>
+<li><a href="#references" id="toc-references">References</a></li>
+</ul>
+</div>
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(catchmentACS)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">library</span>(sf)  <span class="co"># needed to subset the bundled sf objects with [</span></span></code></pre></div>
+<p>catchmentACS computes estimates for drive-time areas from American
+Community Survey (ACS) estimates for census tracts. This article gives
+the whole calculation in one place: the weights used for each kind of
+quantity, the formulas for the margins of error, and what the
+calculations assume. Three other articles derive what is stated here,
+one for the weights
+(<code>vignette(&quot;theory-spatial-aggregation&quot;, package = &quot;catchmentACS&quot;)</code>),
+one for the margins of error
+(<code>vignette(&quot;theory-moe-propagation&quot;, package = &quot;catchmentACS&quot;)</code>),
+and one for the rates
+(<code>vignette(&quot;theory-derived-rates&quot;, package = &quot;catchmentACS&quot;)</code>).</p>
+<p>The examples run without network access on data bundled with the
+package: drive-time areas that are circles with a radius of 1 km per
+minute of drive time, and random ACS values for small squares standing
+in for census tracts. The numbers in this article therefore show how the
+calculations work and describe no real place.</p>
+<div id="from-tract-estimates-to-drive-time-areas" class="section level2">
+<h2>From tract estimates to drive-time areas</h2>
+<p>The quantity of interest is a characteristic of the people or
+households in the drive-time area of a site, such as the number of
+people below the poverty level or the poverty rate. The package starts
+from ACS estimates for census tracts, each published with a margin of
+error (MOE), the half-width of its 90 percent confidence interval. Tract
+boundaries do not follow those of drive-time areas. The package
+therefore combines the estimates of the tracts that overlap a drive-time
+area, with weights computed from the areas of the overlaps, and combines
+their margins of error with the same weights.</p>
+<p><code>cacs_run()</code> does this in five steps, each carried out by
+a function that can also be called on its own:</p>
+<ol style="list-style-type: decimal">
+<li><code>cacs_acs_prefetch()</code> downloads the ACS 5-year estimates
+and their margins of error for the census tracts of one state, using the
+tidycensus package; a download needs a Census API key.</li>
+<li><code>cacs_isochrone()</code> gets the drive-time areas around each
+site, one for each drive time, from a routing service.</li>
+<li><code>cacs_intersect_weight()</code> projects the drive-time areas
+and the tracts to EPSG:5070 (NAD83 / Conus Albers), an equal-area map
+projection, and measures there, in square meters, the area of each tract
+and of its part inside each drive-time area. From these areas it
+computes weights and combines the tract estimates and their margins of
+error.</li>
+<li><code>cacs_propagate_moe()</code> recomputes the margins of error at
+the chosen confidence level and records the formula used for each
+row.</li>
+<li><code>cacs_derive_rates()</code> computes the five rates listed in
+<code>cacs_acs_default_rates</code>, such as the poverty rate, each as
+the ratio of two combined counts, with its margin of error.</li>
+</ol>
+<p>Only the first two steps use the network, and the help page of
+<code>cacs_run()</code> describes how to supply their results instead.
+This article describes the calculations of steps 3 to 5.</p>
+</div>
+<div id="the-symbols-the-weights-and-the-estimates" class="section level2">
+<h2>The symbols, the weights, and the estimates</h2>
+<p>The package computes every result separately for each site and drive
+time, so the symbols below, the two weights, and the three estimates all
+describe one site
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>s</mi><annotation encoding="application/x-tex">s</annotation></semantics></math>
+at one drive time. The three articles named above use the same
+symbols.</p>
+<table>
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Symbol</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>I</mi><mi>s</mi></msub><annotation encoding="application/x-tex">I_s</annotation></semantics></math></td>
+<td>the drive-time area of site
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>s</mi><annotation encoding="application/x-tex">s</annotation></semantics></math>:
+the area reachable from the site within the drive time, which contains
+the areas for shorter drive times</td>
+</tr>
+<tr class="even">
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>T</mi><mi>j</mi></msub><annotation encoding="application/x-tex">T_j</annotation></semantics></math></td>
+<td>census tract
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>j</mi><annotation encoding="application/x-tex">j</annotation></semantics></math></td>
+</tr>
+<tr class="odd">
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>I</mi><mi>s</mi></msub><mo>∩</mo><msub><mi>T</mi><mi>j</mi></msub></mrow><annotation encoding="application/x-tex">I_s \cap T_j</annotation></semantics></math></td>
+<td>the part of tract
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>j</mi><annotation encoding="application/x-tex">j</annotation></semantics></math>
+inside the drive-time area</td>
+</tr>
+<tr class="even">
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">|</mo><mspace width="0.167em"></mspace><mo>⋅</mo><mspace width="0.167em"></mspace><mo stretchy="false" form="postfix">|</mo></mrow><annotation encoding="application/x-tex">\lvert\,\cdot\,\rvert</annotation></semantics></math></td>
+<td>area, in square meters on EPSG:5070</td>
+</tr>
+<tr class="odd">
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Y</mi><mi>j</mi></msub><annotation encoding="application/x-tex">Y_j</annotation></semantics></math></td>
+<td>the ACS estimate of a count for tract
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>j</mi><annotation encoding="application/x-tex">j</annotation></semantics></math>,
+such as the number of people below the poverty level</td>
+</tr>
+<tr class="even">
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>X</mi><mi>j</mi></msub><annotation encoding="application/x-tex">X_j</annotation></semantics></math></td>
+<td>the ACS estimate of a median or a per-person value for tract
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>j</mi><annotation encoding="application/x-tex">j</annotation></semantics></math>,
+such as median household income or per capita income</td>
+</tr>
+<tr class="odd">
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mi>j</mi></msub><annotation encoding="application/x-tex">A_j</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>B</mi><mi>j</mi></msub><annotation encoding="application/x-tex">B_j</annotation></semantics></math></td>
+<td>the ACS estimates of the numerator and the denominator of a rate for
+tract
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>j</mi><annotation encoding="application/x-tex">j</annotation></semantics></math></td>
+</tr>
+<tr class="even">
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>M</mi><mi>j</mi></msub><annotation encoding="application/x-tex">M_j</annotation></semantics></math></td>
+<td>the margin of error published with a tract estimate, at the 90
+percent confidence level</td>
+</tr>
+</tbody>
+</table>
+<p>Two weights are computed from these areas. The coverage weight of
+tract
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>j</mi><annotation encoding="application/x-tex">j</annotation></semantics></math>
+is the share of the tract’s area that lies inside the drive-time
+area,</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>w</mi><mrow><mi>s</mi><mi>j</mi></mrow><mrow><mi>c</mi><mi>o</mi><mi>v</mi></mrow></msubsup><mo>=</mo><mfrac><mrow><mo stretchy="false" form="prefix">|</mo><msub><mi>I</mi><mi>s</mi></msub><mo>∩</mo><msub><mi>T</mi><mi>j</mi></msub><mo stretchy="false" form="postfix">|</mo></mrow><mrow><mo stretchy="false" form="prefix">|</mo><msub><mi>T</mi><mi>j</mi></msub><mo stretchy="false" form="postfix">|</mo></mrow></mfrac><mo>,</mo></mrow><annotation encoding="application/x-tex">
+w^{cov}_{sj} = \frac{\lvert I_s \cap T_j \rvert}{\lvert T_j \rvert},
+</annotation></semantics></math></p>
+<p>and the area share of tract
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>j</mi><annotation encoding="application/x-tex">j</annotation></semantics></math>
+is the area of its overlap divided by the total overlap area of all the
+tracts,</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>w</mi><mrow><mi>s</mi><mi>j</mi></mrow><mrow><mi>m</mi><mi>e</mi><mi>a</mi><mi>n</mi></mrow></msubsup><mo>=</mo><mfrac><mrow><mo stretchy="false" form="prefix">|</mo><msub><mi>I</mi><mi>s</mi></msub><mo>∩</mo><msub><mi>T</mi><mi>j</mi></msub><mo stretchy="false" form="postfix">|</mo></mrow><mrow><munder><mo>∑</mo><mi>k</mi></munder><mo stretchy="false" form="prefix">|</mo><msub><mi>I</mi><mi>s</mi></msub><mo>∩</mo><msub><mi>T</mi><mi>k</mi></msub><mo stretchy="false" form="postfix">|</mo></mrow></mfrac><mi>.</mi></mrow><annotation encoding="application/x-tex">
+w^{mean}_{sj} = \frac{\lvert I_s \cap T_j \rvert}{\sum_k \lvert I_s \cap T_k \rvert}.
+</annotation></semantics></math></p>
+<p>Here and below, a sum over tracts runs over the tracts kept for the
+site, drive time, and variable. A tract is kept if its coverage weight
+is above the <code>min_weight</code> argument of
+<code>cacs_intersect_weight()</code> and the ACS data have a row for it
+and the variable. A tract with no row for the variable is left out
+without a warning: a count then leaves out that tract’s share, while an
+average weighted by area shares uses the remaining tracts, whose area
+shares again sum to one. The column <code>weight_basis</code> of the
+result records the weight used: <code>&quot;coverage&quot;</code> or
+<code>&quot;area_mean&quot;</code>.</p>
+<p>A count is estimated by the coverage-weighted sum of the tract
+estimates, a median or a per-person value by the average of the tract
+estimates weighted by area shares, and a rate by the ratio of two
+coverage-weighted sums:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mi>Y</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><mo>=</mo><munder><mo>∑</mo><mi>j</mi></munder><msubsup><mi>w</mi><mrow><mi>s</mi><mi>j</mi></mrow><mrow><mi>c</mi><mi>o</mi><mi>v</mi></mrow></msubsup><mspace width="0.167em"></mspace><msub><mi>Y</mi><mi>j</mi></msub><mo>,</mo><mspace width="2.0em"></mspace><msub><mover><mover><mi>X</mi><mo accent="true">‾</mo></mover><mo accent="true">̂</mo></mover><mi>s</mi></msub><mo>=</mo><munder><mo>∑</mo><mi>j</mi></munder><msubsup><mi>w</mi><mrow><mi>s</mi><mi>j</mi></mrow><mrow><mi>m</mi><mi>e</mi><mi>a</mi><mi>n</mi></mrow></msubsup><mspace width="0.167em"></mspace><msub><mi>X</mi><mi>j</mi></msub><mo>,</mo><mspace width="2.0em"></mspace><msub><mover><mi>R</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><mo>=</mo><mfrac><msub><mover><mi>A</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><msub><mover><mi>B</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub></mfrac><mo>=</mo><mfrac><mrow><munder><mo>∑</mo><mi>j</mi></munder><msubsup><mi>w</mi><mrow><mi>s</mi><mi>j</mi></mrow><mrow><mi>c</mi><mi>o</mi><mi>v</mi></mrow></msubsup><mspace width="0.167em"></mspace><msub><mi>A</mi><mi>j</mi></msub></mrow><mrow><munder><mo>∑</mo><mi>j</mi></munder><msubsup><mi>w</mi><mrow><mi>s</mi><mi>j</mi></mrow><mrow><mi>c</mi><mi>o</mi><mi>v</mi></mrow></msubsup><mspace width="0.167em"></mspace><msub><mi>B</mi><mi>j</mi></msub></mrow></mfrac><mi>.</mi></mrow><annotation encoding="application/x-tex">
+\widehat{Y}_s = \sum_j w^{cov}_{sj}\, Y_j,
+\qquad
+\widehat{\bar X}_s = \sum_j w^{mean}_{sj}\, X_j,
+\qquad
+\widehat{R}_s = \frac{\widehat{A}_s}{\widehat{B}_s}
+= \frac{\sum_j w^{cov}_{sj}\, A_j}{\sum_j w^{cov}_{sj}\, B_j}.
+</annotation></semantics></math></p>
+<p>The two sums of a rate run over the tracts kept for their own
+variable, so a tract that has a row for one of the two and not the other
+enters only one of them.</p>
+<p>The coverage-weighted sum assumes that whatever a variable counts is
+spread evenly over each tract’s area. For the number of people below the
+poverty level, it assumes that those people are spread evenly, not only
+the population as a whole. The average weighted by area shares stands in
+for the median or per-person value of the drive-time area. Its weights
+follow area and ignore how many people live in each tract, so it can be
+far from that value when the overlapping tracts differ in population
+density. If any of the tracts has a missing estimate for the variable,
+the combined estimate and its margin of error are both <code>NA</code>;
+if only the tract’s margin of error is missing, only the margin of error
+is <code>NA</code>.</p>
+<p>ACS margins of error are at the 90 percent level, where the margin of
+error
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>M</mi><annotation encoding="application/x-tex">M</annotation></semantics></math>
+of an estimate is 1.645 times its standard error (SE) <span class="citation">(U.S. Census Bureau 2020, chap. 7)</span>:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi><mo>=</mo><mn>1.645</mn><mspace width="0.167em"></mspace><mrow><mi mathvariant="normal">S</mi><mi mathvariant="normal">E</mi></mrow><mo>,</mo><mspace width="2.0em"></mspace><mrow><mi mathvariant="normal">S</mi><mi mathvariant="normal">E</mi></mrow><mo>=</mo><mfrac><mi>M</mi><mn>1.645</mn></mfrac><mi>.</mi></mrow><annotation encoding="application/x-tex">
+M = 1.645\,\mathrm{SE}, \qquad \mathrm{SE} = \frac{M}{1.645}.
+</annotation></semantics></math></p>
+<p>The package divides each tract margin of error by 1.645 and combines
+the resulting standard errors into the standard error of a combined
+estimate, written
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mi mathvariant="normal">S</mi><mi mathvariant="normal">E</mi></mrow><mo stretchy="false" form="prefix">(</mo><msub><mover><mi>Y</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">\mathrm{SE}(\widehat{Y}_s)</annotation></semantics></math>
+for a count and in the same way for the other estimates. It reports the
+margin of error
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi><mo stretchy="false" form="prefix">(</mo><msub><mover><mi>Y</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mi>z</mi><mspace width="0.167em"></mspace><mrow><mi mathvariant="normal">S</mi><mi mathvariant="normal">E</mi></mrow><mo stretchy="false" form="prefix">(</mo><msub><mover><mi>Y</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">M(\widehat{Y}_s) = z\,\mathrm{SE}(\widehat{Y}_s)</annotation></semantics></math>,
+where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi><mo>=</mo><mn>1.645</mn></mrow><annotation encoding="application/x-tex">z = 1.645</annotation></semantics></math>
+at the default level of 90 percent.
+<code>vignette(&quot;theory-moe-propagation&quot;, package = &quot;catchmentACS&quot;)</code>
+describes other levels, which are set with the <code>level</code>
+argument of <code>cacs_propagate_moe()</code>.</p>
+</div>
+<div id="kinds-of-estimate-and-their-weights" class="section level2">
+<h2>Kinds of estimate and their weights</h2>
+<p>The column <code>estimand_family</code> of the results names the kind
+of estimate in each row. The kind decides which weights combine the
+tract estimates, as recorded in <code>weight_basis</code>, and which
+formula gives the margin of error (see the section “Margins of
+error”):</p>
+<div style="overflow-x: auto;">
+<table>
+<colgroup>
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><code>estimand_family</code></th>
+<th>Kind of estimate</th>
+<th>Estimate</th>
+<th>Weights (<code>weight_basis</code>)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>&quot;spatial_total&quot;</code></td>
+<td>a count, such as the number of people below the poverty level
+(<code>B17001_002</code>)</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mover><mi>Y</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><annotation encoding="application/x-tex">\widehat{Y}_s</annotation></semantics></math></td>
+<td>coverage weights
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>w</mi><mrow><mi>s</mi><mi>j</mi></mrow><mrow><mi>c</mi><mi>o</mi><mi>v</mi></mrow></msubsup><annotation encoding="application/x-tex">w^{cov}_{sj}</annotation></semantics></math>
+(<code>&quot;coverage&quot;</code>)</td>
+</tr>
+<tr class="even">
+<td><code>&quot;median_proxy&quot;</code></td>
+<td>a median, such as median household income
+(<code>B19013_001</code>)</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mover><mover><mi>X</mi><mo accent="true">‾</mo></mover><mo accent="true">̂</mo></mover><mi>s</mi></msub><annotation encoding="application/x-tex">\widehat{\bar X}_s</annotation></semantics></math></td>
+<td>area shares
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>w</mi><mrow><mi>s</mi><mi>j</mi></mrow><mrow><mi>m</mi><mi>e</mi><mi>a</mi><mi>n</mi></mrow></msubsup><annotation encoding="application/x-tex">w^{mean}_{sj}</annotation></semantics></math>
+(<code>&quot;area_mean&quot;</code>)</td>
+</tr>
+<tr class="odd">
+<td><code>&quot;area_weighted_scalar_proxy&quot;</code></td>
+<td>a per-person value: per capita income (<code>B19301_001</code>)</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mover><mover><mi>X</mi><mo accent="true">‾</mo></mover><mo accent="true">̂</mo></mover><mi>s</mi></msub><annotation encoding="application/x-tex">\widehat{\bar X}_s</annotation></semantics></math></td>
+<td>area shares
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>w</mi><mrow><mi>s</mi><mi>j</mi></mrow><mrow><mi>m</mi><mi>e</mi><mi>a</mi><mi>n</mi></mrow></msubsup><annotation encoding="application/x-tex">w^{mean}_{sj}</annotation></semantics></math>
+(<code>&quot;area_mean&quot;</code>)</td>
+</tr>
+<tr class="even">
+<td><code>&quot;derived_rate&quot;</code></td>
+<td>one of the five rates that <code>cacs_derive_rates()</code> adds,
+such as the poverty rate</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mover><mi>R</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><annotation encoding="application/x-tex">\widehat{R}_s</annotation></semantics></math></td>
+<td>coverage weights, for the numerator and the denominator
+(<code>&quot;coverage&quot;</code>)</td>
+</tr>
+<tr class="odd">
+<td><code>&quot;metadata_only&quot;</code></td>
+<td>an ACS code that is not combined (see below)</td>
+<td>none: <code>estimate</code> and <code>moe</code> are
+<code>NA</code></td>
+<td>none (<code>&quot;none&quot;</code>)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>If whatever a count counts is spread evenly over the tract, as the
+coverage-weighted sum assumes, the part of a tract inside the drive-time
+area holds the same share of that count as of the tract’s area. The
+count is therefore split by the coverage weight: a tract half inside the
+drive-time area adds half of its count. The assumption is made for each
+variable on its own, and it asks more of a subgroup than of the
+population as a whole. A tract whose residents below the poverty level
+all live in one corner can have an evenly spread population and an
+unevenly spread poverty count. A median or a per-person value does not
+scale with the part of the tract that is inside. The package averages
+these values with area shares instead. A rate divides two counts, each
+added up with coverage weights.</p>
+<p>As the help page of <code>cacs_intersect_weight()</code> describes,
+the kind of estimate is read from the ACS code alone. Codes of tables
+<code>B19013</code> (median household income) and <code>B25077</code>
+(median value of owner-occupied housing units) are taken as medians, and
+codes of table <code>B19301</code> (per capita income) as per-person
+values. Any other code of the form <code>B</code>, five digits, an
+underscore, and three digits, such as <code>B17001_002</code>, is taken
+as a count. Median gross rent (<code>B25064_001</code>), for instance,
+comes from another table and is summed with coverage weights as if it
+were a count; the package gives no warning. A code of any other form,
+such as one from a table whose name starts with <code>C</code> or
+<code>S</code> or ends in a letter (<code>B17001A</code>), is not
+combined: its row has the kind <code>&quot;metadata_only&quot;</code> and
+<code>NA</code> values. <code>cacs_propagate_moe()</code> stops with an
+error on such rows, and so does <code>cacs_run()</code>.</p>
+</div>
+<div id="a-worked-example-with-both-weights" class="section level2">
+<h2>A worked example with both weights</h2>
+<p>This example follows two variables through the 10-minute drive-time
+area of site <code>AL_SITE_19</code>: the number of people below the
+poverty level (<code>B17001_002</code>), a count, and per capita income
+(<code>B19301_001</code>), a per-person value. The call below sets
+<code>keep_tract_audit = TRUE</code>, so the result also lists the areas
+from which the weights are computed:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="co"># The drive-time areas and ACS data described at the top of this article</span></span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>iso <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">system.file</span>(</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>  <span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;legacy_2025_isochrones.rds&quot;</span>, <span class="at">package =</span> <span class="st">&quot;catchmentACS&quot;</span></span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>))</span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>acs <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">system.file</span>(</span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a>  <span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;sample_alabama_subset.rds&quot;</span>, <span class="at">package =</span> <span class="st">&quot;catchmentACS&quot;</span></span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a>))</span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a>site_id    <span class="ot">&lt;-</span> <span class="st">&quot;AL_SITE_19&quot;</span></span>
+<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a>drive_time <span class="ot">&lt;-</span> <span class="dv">10</span><span class="dt">L</span></span>
+<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a>iso_one <span class="ot">&lt;-</span> iso[</span>
+<span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a>  iso<span class="sc">$</span>site_id <span class="sc">==</span> site_id <span class="sc">&amp;</span> iso<span class="sc">$</span>drive_time_min <span class="sc">==</span> drive_time, ,</span>
+<span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a>  drop <span class="ot">=</span> <span class="cn">FALSE</span></span>
+<span id="cb2-15"><a href="#cb2-15" tabindex="-1"></a>]</span>
+<span id="cb2-16"><a href="#cb2-16" tabindex="-1"></a></span>
+<span id="cb2-17"><a href="#cb2-17" tabindex="-1"></a>weighted <span class="ot">&lt;-</span> <span class="fu">cacs_intersect_weight</span>(</span>
+<span id="cb2-18"><a href="#cb2-18" tabindex="-1"></a>  <span class="at">iso_sf           =</span> iso_one,</span>
+<span id="cb2-19"><a href="#cb2-19" tabindex="-1"></a>  <span class="at">acs_sf           =</span> acs,</span>
+<span id="cb2-20"><a href="#cb2-20" tabindex="-1"></a>  <span class="at">weight_method    =</span> <span class="st">&quot;area&quot;</span>,</span>
+<span id="cb2-21"><a href="#cb2-21" tabindex="-1"></a>  <span class="at">keep_tract_audit =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb2-22"><a href="#cb2-22" tabindex="-1"></a>  <span class="at">verbose          =</span> <span class="cn">FALSE</span></span>
+<span id="cb2-23"><a href="#cb2-23" tabindex="-1"></a>)</span></code></pre></div>
+<p>A coverage weight divides <code>int_area_m2</code>, the area of the
+part of a tract inside the drive-time area, by
+<code>tract_area_m2</code>, the area of the tract. An area share divides
+<code>int_area_m2</code> by its total over the tracts. The code below
+computes both from the <code>cacs_tract_audit</code> attribute of the
+result:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>tracts <span class="ot">&lt;-</span> <span class="fu">attr</span>(weighted, <span class="st">&quot;cacs_tract_audit&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>  <span class="fu">transmute</span>(</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>    GEOID,</span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>    int_area_m2,</span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>    tract_area_m2,</span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>    <span class="at">w_cov  =</span> int_area_m2 <span class="sc">/</span> tract_area_m2,            <span class="co"># coverage weight</span></span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>    <span class="at">w_mean =</span> int_area_m2 <span class="sc">/</span> <span class="fu">sum</span>(int_area_m2)          <span class="co"># area share</span></span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(int_area_m2))</span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a>tracts</span></code></pre></div>
+<pre><code>#&gt; # A tibble: 3 × 5
+#&gt;   GEOID       int_area_m2 tract_area_m2 w_cov w_mean
+#&gt;   &lt;chr&gt;             &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
+#&gt; 1 01027001201    9182624.      9182624. 1.000  0.788
+#&gt; 2 01029001201    1238064.      9182624. 0.135  0.106
+#&gt; 3 01025001201    1238026.      9182624. 0.135  0.106</code></pre>
+<p>The tract that contains the site lies wholly inside the drive-time
+area and has 79 percent of the overlap area. About 13 percent of each of
+the other two tracts lies inside.</p>
+<p>The package’s rows for the two variables show the kind of each
+estimate and the weights used:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>two_rows <span class="ot">&lt;-</span> weighted <span class="sc">|&gt;</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>  <span class="fu">filter</span>(variable <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;B17001_002&quot;</span>, <span class="st">&quot;B19301_001&quot;</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>  <span class="fu">select</span>(variable, estimate, moe, weight_sum, estimand_family, weight_basis)</span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>two_rows</span></code></pre></div>
+<pre><code>#&gt; # A tibble: 2 × 6
+#&gt;   variable   estimate    moe weight_sum estimand_family            weight_basis
+#&gt;   &lt;chr&gt;         &lt;dbl&gt;  &lt;dbl&gt;      &lt;dbl&gt; &lt;chr&gt;                      &lt;chr&gt;       
+#&gt; 1 B17001_002    1146.   87.3       1.27 spatial_total              coverage    
+#&gt; 2 B19301_001   32737. 2340.        1.27 area_weighted_scalar_proxy area_mean</code></pre>
+<p>The count uses the coverage weights. Its estimate, about 1,146
+people, is the count of the tract that contains the site plus about 13
+percent of the count of each of the other two tracts. On both rows,
+<code>weight_sum</code> is the sum of the coverage weights computed
+above, although per capita income is averaged with the area shares.</p>
+<p>All three tracts have a row for per capita income in the ACS data, so
+the area shares computed above are the ones that the package uses for
+it. The code below applies both kinds of weights to the three tract
+values:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>pc_income <span class="ot">&lt;-</span> acs <span class="sc">|&gt;</span></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>  sf<span class="sc">::</span><span class="fu">st_drop_geometry</span>() <span class="sc">|&gt;</span></span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>  <span class="fu">filter</span>(GEOID <span class="sc">%in%</span> tracts<span class="sc">$</span>GEOID, variable <span class="sc">==</span> <span class="st">&quot;B19301_001&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>  <span class="fu">select</span>(GEOID, <span class="at">X =</span> estimate)</span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>demo <span class="ot">&lt;-</span> tracts <span class="sc">|&gt;</span></span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>  <span class="fu">select</span>(GEOID, w_cov, w_mean) <span class="sc">|&gt;</span></span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a>  <span class="fu">left_join</span>(pc_income, <span class="at">by =</span> <span class="st">&quot;GEOID&quot;</span>)</span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a>demo</span></code></pre></div>
+<pre><code>#&gt; # A tibble: 3 × 4
+#&gt;   GEOID       w_cov w_mean     X
+#&gt;   &lt;chr&gt;       &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;
+#&gt; 1 01027001201 1.000  0.788 34144
+#&gt; 2 01029001201 0.135  0.106 15508
+#&gt; 3 01025001201 0.135  0.106 39531</code></pre>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>pc_sum <span class="ot">&lt;-</span> <span class="fu">sum</span>(demo<span class="sc">$</span>w_cov  <span class="sc">*</span> demo<span class="sc">$</span>X)   <span class="co"># coverage weights, as for a count</span></span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>pc_avg <span class="ot">&lt;-</span> <span class="fu">sum</span>(demo<span class="sc">$</span>w_mean <span class="sc">*</span> demo<span class="sc">$</span>X)   <span class="co"># area shares, as the package does</span></span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a><span class="fu">c</span>(<span class="at">coverage_weighted_sum =</span> pc_sum, <span class="at">area_share_average =</span> pc_avg)</span></code></pre></div>
+<pre><code>#&gt; coverage_weighted_sum    area_share_average 
+#&gt;              41564.57              32737.04</code></pre>
+<p>The average weighted by area shares, 32,737 dollars, is the estimate
+that the package reports for <code>B19301_001</code> above. It lies
+between the smallest and the largest tract values, 15,508 and 39,531
+dollars.
+<code>vignette(&quot;theory-spatial-aggregation&quot;, package = &quot;catchmentACS&quot;)</code>
+shows with two tracts how far this average can be from the per capita
+income of the people in the drive-time area.</p>
+<p>The same tract values weighted by coverage weights add up to 41,565
+dollars, more than the per capita income of any of the three tracts.
+This sum is not a per capita income: it grows with the number of tracts
+in the drive-time area and with the part of each that lies inside.</p>
+<p>Each of the two rows also has a margin of error, computed with the
+same weights as its estimate; the next section gives the formulas.</p>
+</div>
+<div id="margins-of-error" class="section level2">
+<h2>Margins of error</h2>
+<p>The margins of error of counts, medians, and per-person values come
+from <code>cacs_intersect_weight()</code> at the 90 percent level and
+from <code>cacs_propagate_moe()</code> at the chosen level, and those of
+the rates from <code>cacs_derive_rates()</code>. Each margin of error is
+computed from the published tract margins of error
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>M</mi><mi>j</mi></msub><annotation encoding="application/x-tex">M_j</annotation></semantics></math>
+and the weights of the estimate, with the weights treated as fixed
+numbers. A count is a sum of weighted tract estimates, and its margin of
+error comes from the formula that the Census Bureau’s handbook for ACS
+data users gives for a sum <span class="citation">(U.S. Census Bureau
+2020, chap. 8)</span>:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi><mo stretchy="false" form="prefix">(</mo><msub><mover><mi>Y</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mi>z</mi><msqrt><mrow><munder><mo>∑</mo><mi>j</mi></munder><msup><mrow><mo stretchy="true" form="prefix">(</mo><mfrac><mrow><msubsup><mi>w</mi><mrow><mi>s</mi><mi>j</mi></mrow><mrow><mi>c</mi><mi>o</mi><mi>v</mi></mrow></msubsup><mspace width="0.167em"></mspace><msub><mi>M</mi><mi>j</mi></msub></mrow><mn>1.645</mn></mfrac><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup></mrow></msqrt><mi>.</mi></mrow><annotation encoding="application/x-tex">
+M(\widehat{Y}_s) = z \sqrt{\sum_j \left(\frac{w^{cov}_{sj}\, M_j}{1.645}\right)^2}.
+</annotation></semantics></math></p>
+<p>With the default level of 90 percent
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi><mo>=</mo><mn>1.645</mn></mrow><annotation encoding="application/x-tex">z = 1.645</annotation></semantics></math>),
+this reduces to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msqrt><mrow><msub><mo>∑</mo><mi>j</mi></msub><mo stretchy="false" form="prefix">(</mo><msubsup><mi>w</mi><mrow><mi>s</mi><mi>j</mi></mrow><mrow><mi>c</mi><mi>o</mi><mi>v</mi></mrow></msubsup><msub><mi>M</mi><mi>j</mi></msub><msup><mo stretchy="false" form="postfix">)</mo><mn>2</mn></msup></mrow></msqrt><annotation encoding="application/x-tex">\sqrt{\sum_j (w^{cov}_{sj} M_j)^2}</annotation></semantics></math>.
+A median or a per-person value gets the same expression with the area
+shares
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>w</mi><mrow><mi>s</mi><mi>j</mi></mrow><mrow><mi>m</mi><mi>e</mi><mi>a</mi><mi>n</mi></mrow></msubsup><annotation encoding="application/x-tex">w^{mean}_{sj}</annotation></semantics></math>
+in place of the coverage weights. For these values the margin of error
+is that of an area-weighted average of tract values, an approximation
+that the package makes and the handbook does not give.</p>
+<p>For a rate
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mi>R</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><mo>=</mo><msub><mover><mi>A</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><mi>/</mi><msub><mover><mi>B</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub></mrow><annotation encoding="application/x-tex">\widehat{R}_s = \widehat{A}_s / \widehat{B}_s</annotation></semantics></math>,
+the handbook distinguishes a proportion, whose numerator is part of its
+denominator, from other ratios and gives a formula for each. In terms of
+the margins of error of the two counts,</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi><mo stretchy="false" form="prefix">(</mo><msub><mover><mi>R</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mfrac><msqrt><mrow><mi>M</mi><mo stretchy="false" form="prefix">(</mo><msub><mover><mi>A</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><msup><mo stretchy="false" form="postfix">)</mo><mn>2</mn></msup><mo>∓</mo><msubsup><mover><mi>R</mi><mo accent="true">̂</mo></mover><mi>s</mi><mn>2</mn></msubsup><mspace width="0.167em"></mspace><mi>M</mi><mo stretchy="false" form="prefix">(</mo><msub><mover><mi>B</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><msup><mo stretchy="false" form="postfix">)</mo><mn>2</mn></msup></mrow></msqrt><msub><mover><mi>B</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub></mfrac><mo>,</mo></mrow><annotation encoding="application/x-tex">
+M(\widehat{R}_s) = \frac{\sqrt{M(\widehat{A}_s)^2 \mp \widehat{R}_s^2\, M(\widehat{B}_s)^2}}{\widehat{B}_s},
+</annotation></semantics></math></p>
+<p>where the minus sign gives the proportion formula and the plus sign
+the ratio formula. The column <code>moe_formula_effective</code> records
+the formula used in each row: <code>&quot;weighted_sum&quot;</code> for counts,
+<code>&quot;weighted_mean&quot;</code> for medians and per-person values, and
+<code>&quot;proportion_subset&quot;</code> or
+<code>&quot;general_ratio_conservative&quot;</code> for rates.</p>
+<p>All five rates are proportions: the numerator of each is part of its
+denominator. For a proportion, the handbook uses the ratio formula only
+in place of a proportion formula that fails (see below). Unless the
+argument <code>formula_dispatch</code> is changed,
+<code>cacs_derive_rates()</code> and <code>cacs_run()</code>
+nevertheless give all five rates the ratio formula, whose margin of
+error is never the narrower of the two.
+<code>vignette(&quot;theory-derived-rates&quot;, package = &quot;catchmentACS&quot;)</code>
+lists the formula of every rate for each value of
+<code>formula_dispatch</code> and gives the reason recorded for
+<code>unemp_rate</code>.</p>
+<p>The proportion formula fails when the value under its square root is
+negative. The package then computes that row with the ratio formula, as
+the handbook advises for this case, and records the substitution in the
+row.
+<code>vignette(&quot;theory-moe-propagation&quot;, package = &quot;catchmentACS&quot;)</code>
+describes the columns that record it and how zero denominators and
+missing values are handled.</p>
+</div>
+<div id="limitations" class="section level2">
+<h2>Limitations</h2>
+<p>Counts and rates rest on the assumption, stated with the notation
+above, that whatever a variable counts is spread evenly over each
+tract’s area. <span class="citation">Comber and Zeng (2019, 8)</span>
+describe area weighting as the best-known method for transferring counts
+between two sets of areas. They note that its assumption rarely holds,
+but that the method is reasonable when no other data on where people
+live are available. That method moves counts, and the averages this
+package forms for medians and per-person values are its own. They weight
+each tract by the area it shares with the drive-time area and ignore how
+many people live in it. They therefore match the drive-time area’s own
+per-person value only when the overlapping tracts hold the same number
+of residents per unit area. For a median, not even that is enough,
+because the median of a combined distribution is not an average of the
+tract medians.
+<code>vignette(&quot;theory-spatial-aggregation&quot;, package = &quot;catchmentACS&quot;)</code>
+works through an example. The package has no population weighting yet:
+<code>weight_method = &quot;population&quot;</code> gives an error.</p>
+<p>All the margins of error treat the estimates of different tracts as
+independent. The handbook’s approximation formulas leave out the
+covariance between estimates, so they can overstate or understate a
+margin of error <span class="citation">(U.S. Census Bureau 2020, chap.
+8)</span>. They also depart further from the standard error computed
+from the ACS microdata as more estimates are combined. If the tract
+estimates in a drive-time area are positively correlated, the reported
+margins of error of counts, medians, and per-person values are too
+small. The margins of error also leave out error from area weighting and
+uncertainty in the drive-time areas. catchmentACS does not use the
+Census Bureau’s variance replicate tables, which reflect this covariance
+<span class="citation">(U.S. Census Bureau 2020, chap. 8)</span> and
+performed best among the three approaches compared by <span class="citation">Folch et al. (2023)</span>.
+<code>vignette(&quot;theory-moe-propagation&quot;, package = &quot;catchmentACS&quot;)</code>
+discusses each assumption and what it means for rates.</p>
+<p>The margins of error describe each site and drive time separately.
+Each drive-time area of a site contains its areas for shorter drive
+times, and the areas of nearby sites can overlap the same tracts, so
+their estimates are computed in part from the same tract estimates and
+are not independent. The package does not compute the covariance between
+them. A comparison that treats two such estimates as independent, such
+as the Census Bureau’s test for comparing two estimates <span class="citation">(U.S. Census Bureau 2020, chap. 7)</span>, leaves this
+covariance out. For two counts, the shared tracts make the estimates
+positively correlated, so the test finds fewer differences than it
+should. For two rates, the sign of the correlation also depends on how
+the errors of the numerator and the denominator in each shared tract are
+related.</p>
+<p><code>cacs_derive_rates()</code> computes the five rates in
+<code>cacs_acs_default_rates</code> and gives an error for any other
+list of rates. A ratio of two other counts can be formed from the
+weighted counts and their margins of error in the result, with the
+formulas above, as
+<code>vignette(&quot;theory-derived-rates&quot;, package = &quot;catchmentACS&quot;)</code>
+describes.</p>
+<p>Data from outside a box drawn around the contiguous United States and
+the District of Columbia, such as data for Alaska, Hawaii, or Puerto
+Rico, stop <code>cacs_intersect_weight()</code> with an error.
+<code>vignette(&quot;theory-spatial-aggregation&quot;, package = &quot;catchmentACS&quot;)</code>
+describes the projection on which the areas are measured. When the ACS
+data are the tracts of one state, as <code>cacs_acs_prefetch()</code>
+downloads them, the part of a drive-time area that extends into another
+state adds nothing to the estimates.</p>
+</div>
+<div id="references" class="section level2">
+<h2>References</h2>
+<script>
+// Chrome can leave out a hat that sits over a bar, such as the hat of the
+// estimated average in the formulas above. Written as a spacing character,
+// the hat is always drawn.
+document.querySelectorAll("math mover > mover + mo").forEach(function (mo) {
+  if (mo.textContent === "\u0302") {
+    mo.textContent = "\u02C6";
+  }
+});
+</script>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-comber2019spatial" class="csl-entry">
+Comber, Alexis, and Wen Zeng. 2019. <span>“Spatial Interpolation Using
+Areal Features: A Review of Methods and Opportunities Using New Forms of
+Data with Coded Illustrations.”</span> <em>Geography Compass</em> 13
+(10): e12465. <a href="https://doi.org/10.1111/gec3.12465">https://doi.org/10.1111/gec3.12465</a>.
+</div>
+<div id="ref-folch2023covariance" class="csl-entry">
+Folch, David C., Seth Spielman, and Molly Graber. 2023. <span>“The
+Impact of Covariance on <span>American Community Survey</span> Margins
+of Error: Computational Alternatives.”</span> <em>Population Research
+and Policy Review</em> 42 (4): 55. <a href="https://doi.org/10.1007/s11113-023-09786-y">https://doi.org/10.1007/s11113-023-09786-y</a>.
+</div>
+<div id="ref-census2020understanding" class="csl-entry">
+U.S. Census Bureau. 2020. <em>Understanding and Using <span>American
+Community Survey</span> Data: What All Data Users Need to Know</em>.
+U.S. Government Publishing Office. <a href="https://www.census.gov/programs-surveys/acs/library/handbooks/general.html">https://www.census.gov/programs-surveys/acs/library/handbooks/general.html</a>.
+</div>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+
+</body>
+</html>

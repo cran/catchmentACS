@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Margins of error for combined estimates</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+<style type="text/css">
+
+div.csl-bib-body { }
+div.csl-entry {
+clear: both;
+}
+.hanging div.csl-entry {
+margin-left:2em;
+text-indent:-2em;
+}
+div.csl-left-margin {
+min-width:2em;
+float:left;
+}
+div.csl-right-inline {
+margin-left:2em;
+padding-left:1em;
+}
+div.csl-indent {
+margin-left: 2em;
+}
+</style>
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Margins of error for combined
+estimates</h1>
+
+
+<div id="TOC">
+<ul>
+<li><a href="#what-the-margins-of-error-assume" id="toc-what-the-margins-of-error-assume">What the margins of error
+assume</a></li>
+<li><a href="#standard-errors-and-the-90-percent-level" id="toc-standard-errors-and-the-90-percent-level">Standard errors and
+the 90 percent level</a></li>
+<li><a href="#counts-medians-and-per-person-values" id="toc-counts-medians-and-per-person-values">Counts, medians, and
+per-person values</a></li>
+<li><a href="#rates-the-proportion-and-ratio-formulas" id="toc-rates-the-proportion-and-ratio-formulas">Rates: the proportion
+and ratio formulas</a></li>
+<li><a href="#a-negative-value-under-the-square-root" id="toc-a-negative-value-under-the-square-root">A negative value under
+the square root</a></li>
+<li><a href="#zero-denominators-and-missing-values" id="toc-zero-denominators-and-missing-values">Zero denominators and
+missing values</a></li>
+<li><a href="#a-count-its-margin-of-error-from-the-tract-margins" id="toc-a-count-its-margin-of-error-from-the-tract-margins">A count: its
+margin of error from the tract margins</a></li>
+<li><a href="#a-rate-that-falls-back-to-the-ratio-formula" id="toc-a-rate-that-falls-back-to-the-ratio-formula">A rate that falls
+back to the ratio formula</a></li>
+<li><a href="#references" id="toc-references">References</a></li>
+</ul>
+</div>
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(catchmentACS)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">library</span>(sf)  <span class="co"># needed to subset the bundled sf objects with [</span></span></code></pre></div>
+<p>Each American Community Survey (ACS) estimate for a census tract is
+published with a margin of error (MOE), the half-width of its 90 percent
+confidence interval. An estimate for a drive-time area combines the
+estimates of the tracts that overlap the area, and catchmentACS computes
+its margin of error from the margins of error of those tract estimates.
+The margins of error are computed by
+<code>cacs_intersect_weight()</code>, <code>cacs_propagate_moe()</code>,
+and <code>cacs_derive_rates()</code>, whose help pages describe the
+arguments and the columns of the results.</p>
+<div id="what-the-margins-of-error-assume" class="section level2">
+<h2>What the margins of error assume</h2>
+<p>Margins of error are not added like estimates. For independent
+estimates the variances add, so the sum of two independent estimates
+that each have a margin of error
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>M</mi><annotation encoding="application/x-tex">M</annotation></semantics></math>
+has a margin of error of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msqrt><mn>2</mn></msqrt><mspace width="0.167em"></mspace><mi>M</mi></mrow><annotation encoding="application/x-tex">\sqrt{2}\,M</annotation></semantics></math>.
+The formulas for sums, proportions, and ratios follow the approximations
+in chapter 8 of the Census Bureau’s handbook for ACS data users <span class="citation">(U.S. Census Bureau 2020)</span>. The package applies
+the formula for a sum to the weighted tract estimates, treating the
+weights as fixed constants. The margins of error for medians and
+per-person values (rows whose <code>estimand_family</code> is
+<code>&quot;median_proxy&quot;</code> or
+<code>&quot;area_weighted_scalar_proxy&quot;</code>) come from an average of tract
+values weighted by area, an approximation made by the package rather
+than one given in the handbook.</p>
+<p>The margins of error are combined as if the tract estimates were
+independent. The handbook notes that its approximation formulas leave
+out the covariance between estimates, so they can overstate or
+understate the margin of error depending on the direction of the
+correlation. If the tract estimates in an area are positively
+correlated, the true margin of error of a count, a median, or a
+per-person value is larger than the reported one. For those three kinds
+of estimate the reported margins of error should be read as
+understatements of unknown size. For a rate, errors that move the
+numerator and the denominator in the same direction partly offset each
+other in the ratio, and the default ratio formula gives a wider margin
+than the proportion formula (both are given below). The package does not
+compute the net effect for a given rate.</p>
+<p>According to the handbook, the variance replicate tables that the
+Census Bureau publishes for some 5-year detailed tables, including
+estimates for tracts, account for the covariance that the approximation
+formulas leave out. <span class="citation">Folch et al. (2023)</span>
+compare three ways of computing the margin of error of combined ACS
+estimates and find that only the one based on these replicate tables
+accounts for the covariance between the estimates, and that it performs
+best. The package does not use these tables.</p>
+<p>The weights are treated as fixed numbers (the results record this
+with <code>weight_uncertainty_propagated = FALSE</code>). The margins of
+error therefore do not include error from area weighting itself. One
+source they leave out is the assumption that whatever a variable counts
+is spread evenly over each tract’s area. The other, for medians and
+per-person values, is the weighting of tracts by area. They also take
+each drive-time area as given, so they do not include uncertainty in the
+area itself, which depends on the routing service and the road data used
+to compute it.</p>
+</div>
+<div id="standard-errors-and-the-90-percent-level" class="section level2">
+<h2>Standard errors and the 90 percent level</h2>
+<p>Because the published margins of error are at the 90 percent
+confidence level, the handbook converts a margin of error
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>M</mi><annotation encoding="application/x-tex">M</annotation></semantics></math>
+to a standard error (SE) with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mi mathvariant="normal">S</mi><mi mathvariant="normal">E</mi></mrow><mo>=</mo><mi>M</mi><mi>/</mi><mn>1.645</mn></mrow><annotation encoding="application/x-tex">\mathrm{SE} = M / 1.645</annotation></semantics></math>
+<span class="citation">(U.S. Census Bureau 2020, chap. 7)</span>. A
+margin of error at another confidence level is the standard error
+multiplied by
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>z</mi><annotation encoding="application/x-tex">z</annotation></semantics></math>,
+the normal quantile for the level,
+<code>qnorm(1 - (1 - level) / 2)</code>:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi><mo>=</mo><mi>z</mi><mspace width="0.167em"></mspace><mrow><mi mathvariant="normal">S</mi><mi mathvariant="normal">E</mi></mrow><mo>,</mo><mspace width="2.0em"></mspace><mrow><mi mathvariant="normal">S</mi><mi mathvariant="normal">E</mi></mrow><mo>=</mo><mfrac><mi>M</mi><mi>z</mi></mfrac><mi>.</mi></mrow><annotation encoding="application/x-tex">
+M = z\,\mathrm{SE}, \qquad \mathrm{SE} = \frac{M}{z}.
+</annotation></semantics></math></p>
+<p>At the 90 percent level the package uses
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi><mo>=</mo><mn>1.645</mn></mrow><annotation encoding="application/x-tex">z = 1.645</annotation></semantics></math>,
+the value in the handbook, rather than <code>qnorm(0.95)</code>, which
+is 1.644854; the two differ by about 0.00015.</p>
+<p>The package combines margins of error through their standard errors.
+For two independent estimates with margins of error
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>M</mi><mn>1</mn></msub><annotation encoding="application/x-tex">M_1</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>M</mi><mn>2</mn></msub><annotation encoding="application/x-tex">M_2</annotation></semantics></math>
+at the 90 percent level, the margin of error of their sum is</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>M</mi><mtext mathvariant="normal">sum</mtext></msub><mo>=</mo><mi>z</mi><msqrt><mrow><msup><mrow><mo stretchy="true" form="prefix">(</mo><mfrac><msub><mi>M</mi><mn>1</mn></msub><mn>1.645</mn></mfrac><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup><mo>+</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><mfrac><msub><mi>M</mi><mn>2</mn></msub><mn>1.645</mn></mfrac><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup></mrow></msqrt><mo>,</mo></mrow><annotation encoding="application/x-tex">
+M_{\text{sum}}
+= z \sqrt{\left(\frac{M_1}{1.645}\right)^2 + \left(\frac{M_2}{1.645}\right)^2},
+</annotation></semantics></math></p>
+<p>which at the 90 percent level, where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi><mo>=</mo><mn>1.645</mn></mrow><annotation encoding="application/x-tex">z = 1.645</annotation></semantics></math>,
+is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msqrt><mrow><msubsup><mi>M</mi><mn>1</mn><mn>2</mn></msubsup><mo>+</mo><msubsup><mi>M</mi><mn>2</mn><mn>2</mn></msubsup></mrow></msqrt><annotation encoding="application/x-tex">\sqrt{M_1^2 + M_2^2}</annotation></semantics></math>,
+the handbook’s formula for the margin of error of a sum. All the
+formulas in this article have this form: each tract margin of error is
+divided by 1.645 to give a standard error, the standard errors are
+combined, and the combined standard error is multiplied by
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>z</mi><annotation encoding="application/x-tex">z</annotation></semantics></math>.
+The level is set by the <code>level</code> argument of
+<code>cacs_propagate_moe()</code>, 0.9 by default, and
+<code>cacs_derive_rates()</code> uses the same level for the rates.</p>
+<p><code>cacs_se_to_moe()</code> and <code>cacs_moe_to_se()</code>
+convert between standard errors and margins of error at a given
+level.</p>
+</div>
+<div id="counts-medians-and-per-person-values" class="section level2">
+<h2>Counts, medians, and per-person values</h2>
+<p>The help page of <code>cacs_propagate_moe()</code> names the
+package’s four margin-of-error formulas Families A, B, C1, and C2. C1
+and C2 also appear in the package’s warnings. The column
+<code>moe_formula_effective</code> of the results names the formula used
+for each row: <code>&quot;weighted_sum&quot;</code> (A),
+<code>&quot;weighted_mean&quot;</code> (B), <code>&quot;proportion_subset&quot;</code> (C1),
+or <code>&quot;general_ratio_conservative&quot;</code> (C2).</p>
+<p>In the notation of
+<code>vignette(&quot;methodology&quot;, package = &quot;catchmentACS&quot;)</code>, a count
+for the drive-time area of site
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>s</mi><annotation encoding="application/x-tex">s</annotation></semantics></math>
+is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mi>Y</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><mo>=</mo><msub><mo>∑</mo><mi>j</mi></msub><msubsup><mi>w</mi><mrow><mi>s</mi><mi>j</mi></mrow><mrow><mi>c</mi><mi>o</mi><mi>v</mi></mrow></msubsup><mspace width="0.167em"></mspace><msub><mi>Y</mi><mi>j</mi></msub></mrow><annotation encoding="application/x-tex">\widehat{Y}_s = \sum_j w^{cov}_{sj}\, Y_j</annotation></semantics></math>.
+Here
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Y</mi><mi>j</mi></msub><annotation encoding="application/x-tex">Y_j</annotation></semantics></math>
+is the estimate for tract
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>j</mi><annotation encoding="application/x-tex">j</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>w</mi><mrow><mi>s</mi><mi>j</mi></mrow><mrow><mi>c</mi><mi>o</mi><mi>v</mi></mrow></msubsup><annotation encoding="application/x-tex">w^{cov}_{sj}</annotation></semantics></math>
+its coverage weight, the share of the tract’s area inside the drive-time
+area; the sum runs over the tracts kept for the site, drive time, and
+variable. With the weights fixed, the term for tract
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>j</mi><annotation encoding="application/x-tex">j</annotation></semantics></math>
+has the standard error
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>w</mi><mrow><mi>s</mi><mi>j</mi></mrow><mrow><mi>c</mi><mi>o</mi><mi>v</mi></mrow></msubsup><msub><mi>M</mi><mi>j</mi></msub><mi>/</mi><mn>1.645</mn></mrow><annotation encoding="application/x-tex">w^{cov}_{sj} M_j / 1.645</annotation></semantics></math>,
+where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>M</mi><mi>j</mi></msub><annotation encoding="application/x-tex">M_j</annotation></semantics></math>
+is the published margin of error of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Y</mi><mi>j</mi></msub><annotation encoding="application/x-tex">Y_j</annotation></semantics></math>.
+The margin of error of the count (Family A) is therefore</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi><mo stretchy="false" form="prefix">(</mo><msub><mover><mi>Y</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mi>z</mi><msqrt><mrow><munder><mo>∑</mo><mi>j</mi></munder><msup><mrow><mo stretchy="true" form="prefix">(</mo><mfrac><mrow><msubsup><mi>w</mi><mrow><mi>s</mi><mi>j</mi></mrow><mrow><mi>c</mi><mi>o</mi><mi>v</mi></mrow></msubsup><mspace width="0.167em"></mspace><msub><mi>M</mi><mi>j</mi></msub></mrow><mn>1.645</mn></mfrac><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup></mrow></msqrt><mo>,</mo></mrow><annotation encoding="application/x-tex">
+M(\widehat{Y}_s) = z \sqrt{\sum_j \left(\frac{w^{cov}_{sj}\, M_j}{1.645}\right)^2},
+</annotation></semantics></math></p>
+<p>which at the 90 percent level is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msqrt><mrow><msub><mo>∑</mo><mi>j</mi></msub><mo stretchy="false" form="prefix">(</mo><msubsup><mi>w</mi><mrow><mi>s</mi><mi>j</mi></mrow><mrow><mi>c</mi><mi>o</mi><mi>v</mi></mrow></msubsup><msub><mi>M</mi><mi>j</mi></msub><msup><mo stretchy="false" form="postfix">)</mo><mn>2</mn></msup></mrow></msqrt><annotation encoding="application/x-tex">\sqrt{\sum_j (w^{cov}_{sj} M_j)^2}</annotation></semantics></math>,
+the handbook’s formula for a sum applied to the weighted tract
+estimates. Each tract enters with its margin of error multiplied by its
+coverage weight. A tract that lies wholly inside the area enters with
+its full margin of error, and a tract with a tenth of its area inside
+with a tenth of it.</p>
+<p>A median or a per-person value is estimated by
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mover><mi>X</mi><mo accent="true">‾</mo></mover><mo accent="true">̂</mo></mover><mi>s</mi></msub><mo>=</mo><msub><mo>∑</mo><mi>j</mi></msub><msubsup><mi>w</mi><mrow><mi>s</mi><mi>j</mi></mrow><mrow><mi>m</mi><mi>e</mi><mi>a</mi><mi>n</mi></mrow></msubsup><mspace width="0.167em"></mspace><msub><mi>X</mi><mi>j</mi></msub></mrow><annotation encoding="application/x-tex">\widehat{\bar X}_s = \sum_j w^{mean}_{sj}\, X_j</annotation></semantics></math>,
+the average of the tract estimates
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>X</mi><mi>j</mi></msub><annotation encoding="application/x-tex">X_j</annotation></semantics></math>
+weighted by their area shares
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>w</mi><mrow><mi>s</mi><mi>j</mi></mrow><mrow><mi>m</mi><mi>e</mi><mi>a</mi><mi>n</mi></mrow></msubsup><annotation encoding="application/x-tex">w^{mean}_{sj}</annotation></semantics></math>,
+which sum to one. Its margin of error (Family B) is the same formula
+with the area shares in place of the coverage weights:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi><mo stretchy="false" form="prefix">(</mo><msub><mover><mover><mi>X</mi><mo accent="true">‾</mo></mover><mo accent="true">̂</mo></mover><mi>s</mi></msub><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mi>z</mi><msqrt><mrow><munder><mo>∑</mo><mi>j</mi></munder><msup><mrow><mo stretchy="true" form="prefix">(</mo><mfrac><mrow><msubsup><mi>w</mi><mrow><mi>s</mi><mi>j</mi></mrow><mrow><mi>m</mi><mi>e</mi><mi>a</mi><mi>n</mi></mrow></msubsup><mspace width="0.167em"></mspace><msub><mi>M</mi><mi>j</mi></msub></mrow><mn>1.645</mn></mfrac><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup></mrow></msqrt><mi>.</mi></mrow><annotation encoding="application/x-tex">
+M(\widehat{\bar X}_s) = z \sqrt{\sum_j \left(\frac{w^{mean}_{sj}\, M_j}{1.645}\right)^2}.
+</annotation></semantics></math></p>
+<p>This is the margin of error of the weighted average under the same
+assumptions, independent tract estimates and fixed weights. The average
+of tract medians or per-person values only stands in for the median or
+per-person value of the drive-time area. Its margin of error describes
+the sampling error of the average itself, and the difference between
+that average and the drive-time area’s own value is not part of it.
+Unlike sampling error, that difference does not shrink as the ACS
+margins of error do (see
+<code>vignette(&quot;theory-spatial-aggregation&quot;, package = &quot;catchmentACS&quot;)</code>).
+Since the area shares sum to one,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mo>∑</mo><mi>j</mi></msub><msubsup><mi>w</mi><mrow><mi>s</mi><mi>j</mi></mrow><mrow><mi>m</mi><mi>e</mi><mi>a</mi><mi>n</mi></mrow></msubsup><msub><mi>M</mi><mi>j</mi></msub></mrow><annotation encoding="application/x-tex">\sum_j w^{mean}_{sj} M_j</annotation></semantics></math>
+is a weighted average of the tract margins of error. As long as no kept
+tract has a negative margin of error, the margin of error of the average
+is never larger than this weighted average at the 90 percent level. It
+is smaller whenever two or more of the kept tracts have a margin of
+error above zero.</p>
+</div>
+<div id="rates-the-proportion-and-ratio-formulas" class="section level2">
+<h2>Rates: the proportion and ratio formulas</h2>
+<p>A rate
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mi>R</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><mo>=</mo><msub><mover><mi>A</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><mi>/</mi><msub><mover><mi>B</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub></mrow><annotation encoding="application/x-tex">\widehat{R}_s = \widehat{A}_s / \widehat{B}_s</annotation></semantics></math>
+divides two coverage-weighted counts, the numerator
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mover><mi>A</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><annotation encoding="application/x-tex">\widehat{A}_s</annotation></semantics></math>
+and the denominator
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mover><mi>B</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><annotation encoding="application/x-tex">\widehat{B}_s</annotation></semantics></math>,
+whose margins of error
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi><mo stretchy="false" form="prefix">(</mo><msub><mover><mi>A</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">M(\widehat{A}_s)</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi><mo stretchy="false" form="prefix">(</mo><msub><mover><mi>B</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">M(\widehat{B}_s)</annotation></semantics></math>
+come from the formula for counts above. For a ratio of two estimates the
+handbook gives two approximations <span class="citation">(U.S. Census
+Bureau 2020, chap. 8)</span>. The proportion formula (C1) is for a
+proportion, a ratio whose numerator is part of its denominator, such as
+the people below the poverty level among the people for whom poverty
+status is determined:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi><mo stretchy="false" form="prefix">(</mo><msub><mover><mi>R</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mfrac><msqrt><mrow><mi>M</mi><mo stretchy="false" form="prefix">(</mo><msub><mover><mi>A</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><msup><mo stretchy="false" form="postfix">)</mo><mn>2</mn></msup><mo>−</mo><msubsup><mover><mi>R</mi><mo accent="true">̂</mo></mover><mi>s</mi><mn>2</mn></msubsup><mspace width="0.167em"></mspace><mi>M</mi><mo stretchy="false" form="prefix">(</mo><msub><mover><mi>B</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><msup><mo stretchy="false" form="postfix">)</mo><mn>2</mn></msup></mrow></msqrt><msub><mover><mi>B</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub></mfrac><mi>.</mi></mrow><annotation encoding="application/x-tex">
+M(\widehat{R}_s) = \frac{\sqrt{M(\widehat{A}_s)^2 - \widehat{R}_s^2\, M(\widehat{B}_s)^2}}{\widehat{B}_s}.
+</annotation></semantics></math></p>
+<p>The ratio formula (C2) is for a ratio whose numerator is not part of
+its denominator:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi><mo stretchy="false" form="prefix">(</mo><msub><mover><mi>R</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mfrac><msqrt><mrow><mi>M</mi><mo stretchy="false" form="prefix">(</mo><msub><mover><mi>A</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><msup><mo stretchy="false" form="postfix">)</mo><mn>2</mn></msup><mo>+</mo><msubsup><mover><mi>R</mi><mo accent="true">̂</mo></mover><mi>s</mi><mn>2</mn></msubsup><mspace width="0.167em"></mspace><mi>M</mi><mo stretchy="false" form="prefix">(</mo><msub><mover><mi>B</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><msup><mo stretchy="false" form="postfix">)</mo><mn>2</mn></msup></mrow></msqrt><msub><mover><mi>B</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub></mfrac><mi>.</mi></mrow><annotation encoding="application/x-tex">
+M(\widehat{R}_s) = \frac{\sqrt{M(\widehat{A}_s)^2 + \widehat{R}_s^2\, M(\widehat{B}_s)^2}}{\widehat{B}_s}.
+</annotation></semantics></math></p>
+<p>In the first-order (delta method) approximation, the variance of a
+ratio is</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mi mathvariant="normal">S</mi><mi mathvariant="normal">E</mi></mrow><mo stretchy="false" form="prefix">(</mo><msub><mover><mi>R</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><msup><mo stretchy="false" form="postfix">)</mo><mn>2</mn></msup><mo>≈</mo><mfrac><mrow><mrow><mi mathvariant="normal">S</mi><mi mathvariant="normal">E</mi></mrow><mo stretchy="false" form="prefix">(</mo><msub><mover><mi>A</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><msup><mo stretchy="false" form="postfix">)</mo><mn>2</mn></msup><mo>−</mo><mn>2</mn><msub><mover><mi>R</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><mspace width="0.167em"></mspace><mrow><mi mathvariant="normal">C</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">v</mi></mrow><mo stretchy="false" form="prefix">(</mo><msub><mover><mi>A</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><mo>,</mo><msub><mover><mi>B</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><mo stretchy="false" form="postfix">)</mo><mo>+</mo><msubsup><mover><mi>R</mi><mo accent="true">̂</mo></mover><mi>s</mi><mn>2</mn></msubsup><mspace width="0.167em"></mspace><mrow><mi mathvariant="normal">S</mi><mi mathvariant="normal">E</mi></mrow><mo stretchy="false" form="prefix">(</mo><msub><mover><mi>B</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><msup><mo stretchy="false" form="postfix">)</mo><mn>2</mn></msup></mrow><msubsup><mover><mi>B</mi><mo accent="true">̂</mo></mover><mi>s</mi><mn>2</mn></msubsup></mfrac><mi>.</mi></mrow><annotation encoding="application/x-tex">
+\mathrm{SE}(\widehat{R}_s)^2 \approx
+\frac{\mathrm{SE}(\widehat{A}_s)^2
+- 2\widehat{R}_s\,\mathrm{Cov}(\widehat{A}_s, \widehat{B}_s)
++ \widehat{R}_s^2\,\mathrm{SE}(\widehat{B}_s)^2}{\widehat{B}_s^2}.
+</annotation></semantics></math></p>
+<p>With the covariance of the numerator and the denominator set to zero,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>z</mi><annotation encoding="application/x-tex">z</annotation></semantics></math>
+times the square root of this expression is the ratio formula; with the
+covariance set to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mi>R</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><mspace width="0.167em"></mspace><mrow><mi mathvariant="normal">S</mi><mi mathvariant="normal">E</mi></mrow><mo stretchy="false" form="prefix">(</mo><msub><mover><mi>B</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><msup><mo stretchy="false" form="postfix">)</mo><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">\widehat{R}_s\,\mathrm{SE}(\widehat{B}_s)^2</annotation></semantics></math>,
+it is the proportion formula.</p>
+<p>The two formulas differ by
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2</mn><msubsup><mover><mi>R</mi><mo accent="true">̂</mo></mover><mi>s</mi><mn>2</mn></msubsup><mi>M</mi><mo stretchy="false" form="prefix">(</mo><msub><mover><mi>B</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><msup><mo stretchy="false" form="postfix">)</mo><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">2\widehat{R}_s^2 M(\widehat{B}_s)^2</annotation></semantics></math>
+under the square root, so the ratio formula never gives the narrower
+margin. How much wider it is depends on
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mi>R</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><mi>M</mi><mo stretchy="false" form="prefix">(</mo><msub><mover><mi>B</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">\widehat{R}_s M(\widehat{B}_s)</annotation></semantics></math>
+relative to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi><mo stretchy="false" form="prefix">(</mo><msub><mover><mi>A</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">M(\widehat{A}_s)</annotation></semantics></math>:
+with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>r</mi><mo>=</mo><msubsup><mover><mi>R</mi><mo accent="true">̂</mo></mover><mi>s</mi><mn>2</mn></msubsup><mi>M</mi><mo stretchy="false" form="prefix">(</mo><msub><mover><mi>B</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><msup><mo stretchy="false" form="postfix">)</mo><mn>2</mn></msup><mi>/</mi><mi>M</mi><mo stretchy="false" form="prefix">(</mo><msub><mover><mi>A</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><msup><mo stretchy="false" form="postfix">)</mo><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">r = \widehat{R}_s^2 M(\widehat{B}_s)^2 / M(\widehat{A}_s)^2</annotation></semantics></math>
+below 1, the ratio formula gives
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msqrt><mrow><mo stretchy="false" form="prefix">(</mo><mn>1</mn><mo>+</mo><mi>r</mi><mo stretchy="false" form="postfix">)</mo><mi>/</mi><mo stretchy="false" form="prefix">(</mo><mn>1</mn><mo>−</mo><mi>r</mi><mo stretchy="false" form="postfix">)</mo></mrow></msqrt><annotation encoding="application/x-tex">\sqrt{(1 + r) / (1 - r)}</annotation></semantics></math>
+times the margin of error of the proportion formula. When the numerator
+is not zero,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>r</mi><annotation encoding="application/x-tex">r</annotation></semantics></math>
+is also the square of the ratio of the denominator’s relative margin of
+error,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi><mo stretchy="false" form="prefix">(</mo><msub><mover><mi>B</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><mo stretchy="false" form="postfix">)</mo><mi>/</mi><msub><mover><mi>B</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub></mrow><annotation encoding="application/x-tex">M(\widehat{B}_s) / \widehat{B}_s</annotation></semantics></math>,
+to the numerator’s,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi><mo stretchy="false" form="prefix">(</mo><msub><mover><mi>A</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><mo stretchy="false" form="postfix">)</mo><mi>/</mi><msub><mover><mi>A</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub></mrow><annotation encoding="application/x-tex">M(\widehat{A}_s) / \widehat{A}_s</annotation></semantics></math>,
+because
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mi>R</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><mo>=</mo><msub><mover><mi>A</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><mi>/</mi><msub><mover><mi>B</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub></mrow><annotation encoding="application/x-tex">\widehat{R}_s = \widehat{A}_s / \widehat{B}_s</annotation></semantics></math>.
+The factor therefore varies from rate to rate and from area to area, and
+it grows without bound as
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>r</mi><annotation encoding="application/x-tex">r</annotation></semantics></math>
+approaches 1. When
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>r</mi><annotation encoding="application/x-tex">r</annotation></semantics></math>
+is greater than 1, the value under the square root of the proportion
+formula is negative; the next section describes what the package does
+then. The second calculation by hand in
+<code>vignette(&quot;theory-derived-rates&quot;, package = &quot;catchmentACS&quot;)</code>
+compares the two formulas for the labor force participation rate of one
+drive-time area.</p>
+<p>The numerator of each of the five built-in rates is part of its
+denominator, so for all five the handbook’s formula is the proportion
+formula. By default, <code>cacs_derive_rates()</code> and
+<code>cacs_run()</code> nevertheless use the ratio formula for all five
+rates.
+<code>vignette(&quot;theory-derived-rates&quot;, package = &quot;catchmentACS&quot;)</code>
+lists the formula that each rate gets for each value of
+<code>formula_dispatch</code> and gives the reason recorded for
+<code>unemp_rate</code>.</p>
+</div>
+<div id="a-negative-value-under-the-square-root" class="section level2">
+<h2>A negative value under the square root</h2>
+<p>When the proportion formula is chosen for a rate and the value under
+its square root is negative, the package uses the ratio formula for that
+row instead, as the Census Bureau’s handbook advises <span class="citation">(U.S. Census Bureau 2020, chap. 8)</span>. The value is
+negative when
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>r</mi><mo>&gt;</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">r &gt; 1</annotation></semantics></math>,
+that is, when the relative margin of error of the numerator is smaller
+than that of the denominator. The value under the square root of the
+ratio formula is a sum of two squares and cannot be negative, so the
+ratio formula never fails for this reason. It gives no margin of error
+only when the denominator is zero or one of its four inputs is
+missing.</p>
+<p>The row records the substitution: <code>moe_formula_requested</code>
+keeps <code>&quot;proportion_subset&quot;</code>, the formula chosen, while
+<code>moe_formula_effective</code> is
+<code>&quot;general_ratio_conservative&quot;</code>, with
+<code>moe_fallback = TRUE</code> and
+<code>moe_fallback_reason = &quot;negative_variance&quot;</code>. A rate computed
+with the formula chosen for it has <code>moe_fallback = FALSE</code> and
+<code>moe_fallback_reason = &quot;n/a&quot;</code>. These columns are described in
+the help page of <code>cacs_run()</code>. When some rows have a
+substituted formula or cannot be computed,
+<code>cacs_derive_rates()</code> ends with one warning that counts them
+by reason.</p>
+</div>
+<div id="zero-denominators-and-missing-values" class="section level2">
+<h2>Zero denominators and missing values</h2>
+<p>A rate whose denominator is zero, or closer to zero than
+<code>sqrt(.Machine$double.eps)</code> (about 1.5e-08), is
+<code>NA</code>, as is its margin of error, with
+<code>moe_fallback = TRUE</code> and
+<code>moe_fallback_reason = &quot;zero_denominator&quot;</code>. The check catches
+only a denominator of about zero; a small positive denominator gives a
+rate and a margin of error as usual.</p>
+<p>A missing tract estimate or margin of error is not replaced by zero.
+If a tract kept for an area has a missing estimate, the estimate and the
+margin of error for the area are <code>NA</code>; if only the tract’s
+margin of error is missing, only the margin of error is <code>NA</code>.
+A rate is <code>NA</code> when its numerator or denominator, or the
+margin of error of either, is missing, and the help page of
+<code>cacs_derive_rates()</code> describes the columns that mark such
+rates.</p>
+<p>The Census Bureau’s data API puts negative annotation codes, such as
+<code>-555555555</code>, in place of some estimates and margins of
+error. <code>cacs_intersect_weight()</code> sets the six codes
+(-222222222, -333333333, -555555555, -666666666, -888888888, and
+-999999999) to <code>NA</code>, with a warning that counts them (a
+margin-of-error code next to a missing estimate is not counted), and
+they are then handled as the missing values described above. A code in
+place of a tract margin of error, for example, makes the margin of error
+of the variable <code>NA</code> for the areas that include the tract,
+and a rate that uses the variable is <code>NA</code>. Any other negative
+margin of error is not read as missing: the formulas above square it
+like any other value, with no warning. <code>cacs_acs_prefetch()</code>
+returns every negative margin of error as <code>NA</code>.</p>
+</div>
+<div id="a-count-its-margin-of-error-from-the-tract-margins" class="section level2">
+<h2>A count: its margin of error from the tract margins</h2>
+<p>The examples below use data bundled with the package. In these data
+the ACS estimates and margins of error are random numbers, drawn
+separately for each tract and variable, so the examples show how the
+formulas work. One row in twenty instead has a missing estimate and the
+code <code>-555555555</code> in place of a margin of error. Because the
+estimate is missing as well, those rows make a combined estimate
+<code>NA</code>, and <code>cacs_intersect_weight()</code> gives no
+warning about their codes. The draws ignore how the counts of a table
+nest, so in some tracts the labor force is larger than the population 16
+years and over. How often the proportion formula fails in these data,
+for instance, says nothing about real ACS data.</p>
+<p>We use the area whose weights are recomputed in
+<code>vignette(&quot;theory-spatial-aggregation&quot;, package = &quot;catchmentACS&quot;)</code>,
+the 10-minute drive-time area of site <code>AL_SITE_17</code>.
+<code>cacs_intersect_weight()</code> combines the tract estimates, and
+with <code>keep_tract_audit = TRUE</code> it also keeps the coverage
+weight of each tract in the attribute <code>cacs_tract_audit</code>:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="co"># Drive-time areas and ACS data bundled with the package</span></span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>iso <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">system.file</span>(</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>  <span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;legacy_2025_isochrones.rds&quot;</span>, <span class="at">package =</span> <span class="st">&quot;catchmentACS&quot;</span></span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>))</span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>acs <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">system.file</span>(</span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a>  <span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;sample_alabama_subset.rds&quot;</span>, <span class="at">package =</span> <span class="st">&quot;catchmentACS&quot;</span></span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a>))</span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a>site_id    <span class="ot">&lt;-</span> <span class="st">&quot;AL_SITE_17&quot;</span></span>
+<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a>drive_time <span class="ot">&lt;-</span> <span class="dv">10</span><span class="dt">L</span></span>
+<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a>iso_one <span class="ot">&lt;-</span> iso[</span>
+<span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a>  iso<span class="sc">$</span>site_id <span class="sc">==</span> site_id <span class="sc">&amp;</span> iso<span class="sc">$</span>drive_time_min <span class="sc">==</span> drive_time, ,</span>
+<span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a>  drop <span class="ot">=</span> <span class="cn">FALSE</span></span>
+<span id="cb2-15"><a href="#cb2-15" tabindex="-1"></a>]</span>
+<span id="cb2-16"><a href="#cb2-16" tabindex="-1"></a></span>
+<span id="cb2-17"><a href="#cb2-17" tabindex="-1"></a>weighted <span class="ot">&lt;-</span> <span class="fu">cacs_intersect_weight</span>(</span>
+<span id="cb2-18"><a href="#cb2-18" tabindex="-1"></a>  <span class="at">iso_sf           =</span> iso_one,</span>
+<span id="cb2-19"><a href="#cb2-19" tabindex="-1"></a>  <span class="at">acs_sf           =</span> acs,</span>
+<span id="cb2-20"><a href="#cb2-20" tabindex="-1"></a>  <span class="at">weight_method    =</span> <span class="st">&quot;area&quot;</span>,</span>
+<span id="cb2-21"><a href="#cb2-21" tabindex="-1"></a>  <span class="at">keep_tract_audit =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb2-22"><a href="#cb2-22" tabindex="-1"></a>  <span class="at">verbose          =</span> <span class="cn">FALSE</span></span>
+<span id="cb2-23"><a href="#cb2-23" tabindex="-1"></a>)</span>
+<span id="cb2-24"><a href="#cb2-24" tabindex="-1"></a></span>
+<span id="cb2-25"><a href="#cb2-25" tabindex="-1"></a>propagated <span class="ot">&lt;-</span> <span class="fu">cacs_propagate_moe</span>(weighted, <span class="at">verbose =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<p>The number of people below the poverty level
+(<code>B17001_002</code>) is a count, so its margin of error comes from
+the formula for counts (Family A). The package forms that formula by
+applying the handbook’s formula for a sum to the weighted tract
+estimates <span class="citation">(U.S. Census Bureau 2020, chap.
+8)</span>. The code below takes the coverage weight
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>w</mi><mrow><mi>s</mi><mi>j</mi></mrow><mrow><mi>c</mi><mi>o</mi><mi>v</mi></mrow></msubsup><annotation encoding="application/x-tex">w^{cov}_{sj}</annotation></semantics></math>
+of each tract (<code>area_wt</code>) from <code>cacs_tract_audit</code>
+and the published margin of error
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>M</mi><mi>j</mi></msub><annotation encoding="application/x-tex">M_j</annotation></semantics></math>
+from the ACS data:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>VAR <span class="ot">&lt;-</span> <span class="st">&quot;B17001_002&quot;</span></span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>audit <span class="ot">&lt;-</span> <span class="fu">attr</span>(weighted, <span class="st">&quot;cacs_tract_audit&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>  <span class="fu">transmute</span>(GEOID, <span class="at">w_cov =</span> area_wt)</span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>published <span class="ot">&lt;-</span> acs <span class="sc">|&gt;</span></span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>  sf<span class="sc">::</span><span class="fu">st_drop_geometry</span>() <span class="sc">|&gt;</span></span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>  <span class="fu">filter</span>(GEOID <span class="sc">%in%</span> audit<span class="sc">$</span>GEOID, variable <span class="sc">==</span> VAR) <span class="sc">|&gt;</span></span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>  <span class="fu">select</span>(GEOID, <span class="at">M_j =</span> moe)</span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a>hand_A <span class="ot">&lt;-</span> audit <span class="sc">|&gt;</span></span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a>  <span class="fu">left_join</span>(published, <span class="at">by =</span> <span class="st">&quot;GEOID&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(w_cov))</span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a></span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a>hand_A</span></code></pre></div>
+<pre><code>#&gt; # A tibble: 3 × 3
+#&gt;   GEOID       w_cov   M_j
+#&gt;   &lt;chr&gt;       &lt;dbl&gt; &lt;dbl&gt;
+#&gt; 1 01125001001 1       200
+#&gt; 2 01127001001 0.113   218
+#&gt; 3 01123001001 0.113   152</code></pre>
+<p>One tract lies wholly inside the area, and the other two have
+coverage weights of about 0.11. The code below computes the formula for
+counts term by term at the 90 percent level, where the divisor and the
+multiplier
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>z</mi><annotation encoding="application/x-tex">z</annotation></semantics></math>
+are both 1.645:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>z <span class="ot">&lt;-</span> <span class="fl">1.645</span>  <span class="co"># at another level, qnorm(1 - (1 - level) / 2)</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>se_term    <span class="ot">&lt;-</span> hand_A<span class="sc">$</span>w_cov <span class="sc">*</span> hand_A<span class="sc">$</span>M_j <span class="sc">/</span> <span class="fl">1.645</span>  <span class="co"># standard error of each term</span></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>hand_moe_A <span class="ot">&lt;-</span> z <span class="sc">*</span> <span class="fu">sqrt</span>(<span class="fu">sum</span>(se_term<span class="sc">^</span><span class="dv">2</span>))           <span class="co"># z * combined standard error</span></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="fu">list</span>(</span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>  <span class="at">per_tract_var =</span> <span class="fu">round</span>(se_term<span class="sc">^</span><span class="dv">2</span>, <span class="dv">4</span>),</span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a>  <span class="at">summed_var    =</span> <span class="fu">sum</span>(se_term<span class="sc">^</span><span class="dv">2</span>),</span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a>  <span class="at">hand_moe_A    =</span> hand_moe_A</span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a>)</span></code></pre></div>
+<pre><code>#&gt; $per_tract_var
+#&gt; [1] 14781.8294   222.3397   108.0903
+#&gt; 
+#&gt; $summed_var
+#&gt; [1] 15112.26
+#&gt; 
+#&gt; $hand_moe_A
+#&gt; [1] 202.223</code></pre>
+<p>The tract inside the area contributes most of the sum. The other two
+tracts have margins of error of 218 and 152, but their coverage weights
+reduce their squared terms to about 1.3 percent of what they would be if
+the tracts lay wholly inside the area. The package’s row for the same
+variable:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>pkg_A <span class="ot">&lt;-</span> propagated <span class="sc">|&gt;</span></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>  <span class="fu">filter</span>(variable <span class="sc">==</span> VAR) <span class="sc">|&gt;</span></span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>  <span class="fu">select</span>(variable, estimate, moe, moe_formula_effective, moe_fallback)</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>pkg_A</span></code></pre></div>
+<pre><code>#&gt; # A tibble: 1 × 5
+#&gt;   variable   estimate   moe moe_formula_effective moe_fallback
+#&gt;   &lt;chr&gt;         &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;                 &lt;lgl&gt;       
+#&gt; 1 B17001_002    1237.  202. weighted_sum          FALSE</code></pre>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="fu">all.equal</span>(hand_moe_A, pkg_A<span class="sc">$</span>moe)</span></code></pre></div>
+<pre><code>#&gt; [1] TRUE</code></pre>
+<p>The package records <code>&quot;weighted_sum&quot;</code> (Family A) in
+<code>moe_formula_effective</code>, and its margin of error, 202.2, is
+the value computed by hand.</p>
+</div>
+<div id="a-rate-that-falls-back-to-the-ratio-formula" class="section level2">
+<h2>A rate that falls back to the ratio formula</h2>
+<p>With <code>formula_dispatch = &quot;auto&quot;</code>, the proportion formula
+is chosen for <code>poverty_rate</code> and
+<code>labor_force_participation</code>. In the area above it can be used
+for both rates, but in the 10-minute area of site
+<code>AL_SITE_08</code> it cannot be used for
+<code>poverty_rate</code>:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>iso_08 <span class="ot">&lt;-</span> iso[iso<span class="sc">$</span>site_id <span class="sc">==</span> <span class="st">&quot;AL_SITE_08&quot;</span> <span class="sc">&amp;</span> iso<span class="sc">$</span>drive_time_min <span class="sc">==</span> <span class="dv">10</span><span class="dt">L</span>, ,</span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>              drop <span class="ot">=</span> <span class="cn">FALSE</span>]</span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>propagated_08 <span class="ot">&lt;-</span> <span class="fu">cacs_propagate_moe</span>(</span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>  <span class="fu">cacs_intersect_weight</span>(<span class="at">iso_sf =</span> iso_08, <span class="at">acs_sf =</span> acs, <span class="at">verbose =</span> <span class="cn">FALSE</span>),</span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a>  <span class="at">verbose =</span> <span class="cn">FALSE</span></span>
+<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a>)</span>
+<span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a>rates_08 <span class="ot">&lt;-</span> <span class="fu">cacs_derive_rates</span>(propagated_08, <span class="at">formula_dispatch =</span> <span class="st">&quot;auto&quot;</span>,</span>
+<span id="cb11-8"><a href="#cb11-8" tabindex="-1"></a>                              <span class="at">verbose =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<pre><code>#&gt; Warning in cacs_derive_rates(propagated_08, formula_dispatch = &quot;auto&quot;, verbose = FALSE): Some rates are `NA` or use a replacement formula:
+#&gt; • `moe_fallback_reason = &quot;negative_variance&quot;`: 1 rate row used the ratio
+#&gt;   formula (C2), because the proportion formula (C1) gave a negative variance.
+#&gt; ℹ The failure_origin and moe_fallback_reason columns give the reason on each
+#&gt;   rate row.</code></pre>
+<p>The warning counts one row in which the ratio formula replaced the
+proportion formula. The rows of the two rates for which the proportion
+formula was chosen show which one:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>rates_08 <span class="sc">|&gt;</span></span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>  <span class="fu">filter</span>(variable <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;poverty_rate&quot;</span>, <span class="st">&quot;labor_force_participation&quot;</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a>  <span class="fu">select</span>(variable, estimate, moe, moe_formula_requested,</span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a>         moe_formula_effective, moe_fallback, moe_fallback_reason) <span class="sc">|&gt;</span></span>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a>  <span class="fu">glimpse</span>()</span></code></pre></div>
+<pre><code>#&gt; Rows: 2
+#&gt; Columns: 7
+#&gt; $ variable              &lt;chr&gt; &quot;poverty_rate&quot;, &quot;labor_force_participation&quot;
+#&gt; $ estimate              &lt;dbl&gt; 0.4276799, 0.6136355
+#&gt; $ moe                   &lt;dbl&gt; 0.12541387, 0.02354859
+#&gt; $ moe_formula_requested &lt;chr&gt; &quot;proportion_subset&quot;, &quot;proportion_subset&quot;
+#&gt; $ moe_formula_effective &lt;chr&gt; &quot;general_ratio_conservative&quot;, &quot;proportion_subset&quot;
+#&gt; $ moe_fallback          &lt;lgl&gt; TRUE, FALSE
+#&gt; $ moe_fallback_reason   &lt;chr&gt; &quot;negative_variance&quot;, &quot;n/a&quot;</code></pre>
+<p>For <code>poverty_rate</code>, the proportion formula was chosen and
+the ratio formula used, with <code>moe_fallback = TRUE</code> and
+<code>moe_fallback_reason = &quot;negative_variance&quot;</code>;
+<code>labor_force_participation</code> kept the proportion formula. The
+estimates and margins of error of the two counts of the poverty rate
+show why:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a>counts <span class="ot">&lt;-</span> propagated_08 <span class="sc">|&gt;</span></span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>  <span class="fu">filter</span>(variable <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;B17001_002&quot;</span>, <span class="st">&quot;B17001_001&quot;</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a>  <span class="fu">select</span>(variable, estimate, moe)</span>
+<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a>counts</span></code></pre></div>
+<pre><code>#&gt; # A tibble: 2 × 3
+#&gt;   variable   estimate   moe
+#&gt;   &lt;chr&gt;         &lt;dbl&gt; &lt;dbl&gt;
+#&gt; 1 B17001_001    2563.  557.
+#&gt; 2 B17001_002    1096.  216.</code></pre>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a>A   <span class="ot">&lt;-</span> counts<span class="sc">$</span>estimate[counts<span class="sc">$</span>variable <span class="sc">==</span> <span class="st">&quot;B17001_002&quot;</span>]  <span class="co"># numerator</span></span>
+<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a>B   <span class="ot">&lt;-</span> counts<span class="sc">$</span>estimate[counts<span class="sc">$</span>variable <span class="sc">==</span> <span class="st">&quot;B17001_001&quot;</span>]  <span class="co"># denominator</span></span>
+<span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a>M_A <span class="ot">&lt;-</span> counts<span class="sc">$</span>moe[counts<span class="sc">$</span>variable <span class="sc">==</span> <span class="st">&quot;B17001_002&quot;</span>]</span>
+<span id="cb17-4"><a href="#cb17-4" tabindex="-1"></a>M_B <span class="ot">&lt;-</span> counts<span class="sc">$</span>moe[counts<span class="sc">$</span>variable <span class="sc">==</span> <span class="st">&quot;B17001_001&quot;</span>]</span>
+<span id="cb17-5"><a href="#cb17-5" tabindex="-1"></a>R   <span class="ot">&lt;-</span> A <span class="sc">/</span> B</span>
+<span id="cb17-6"><a href="#cb17-6" tabindex="-1"></a></span>
+<span id="cb17-7"><a href="#cb17-7" tabindex="-1"></a><span class="fu">list</span>(</span>
+<span id="cb17-8"><a href="#cb17-8" tabindex="-1"></a>  <span class="at">relative_moe          =</span> <span class="fu">c</span>(<span class="at">numerator =</span> M_A <span class="sc">/</span> A, <span class="at">denominator =</span> M_B <span class="sc">/</span> B),</span>
+<span id="cb17-9"><a href="#cb17-9" tabindex="-1"></a>  <span class="at">under_root_proportion =</span> M_A<span class="sc">^</span><span class="dv">2</span> <span class="sc">-</span> R<span class="sc">^</span><span class="dv">2</span> <span class="sc">*</span> M_B<span class="sc">^</span><span class="dv">2</span>,</span>
+<span id="cb17-10"><a href="#cb17-10" tabindex="-1"></a>  <span class="at">ratio_formula         =</span> <span class="fu">sqrt</span>(M_A<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> R<span class="sc">^</span><span class="dv">2</span> <span class="sc">*</span> M_B<span class="sc">^</span><span class="dv">2</span>) <span class="sc">/</span> B,</span>
+<span id="cb17-11"><a href="#cb17-11" tabindex="-1"></a>  <span class="at">package               =</span> rates_08<span class="sc">$</span>moe[rates_08<span class="sc">$</span>variable <span class="sc">==</span> <span class="st">&quot;poverty_rate&quot;</span>]</span>
+<span id="cb17-12"><a href="#cb17-12" tabindex="-1"></a>)</span></code></pre></div>
+<pre><code>#&gt; $relative_moe
+#&gt;   numerator denominator 
+#&gt;   0.1970576   0.2171622 
+#&gt; 
+#&gt; $under_root_proportion
+#&gt; [1] -10006.85
+#&gt; 
+#&gt; $ratio_formula
+#&gt; [1] 0.1254139
+#&gt; 
+#&gt; $package
+#&gt; [1] 0.1254139</code></pre>
+<p>The relative margin of error of the numerator, 0.197, is smaller than
+that of the denominator, 0.217, so
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>r</mi><annotation encoding="application/x-tex">r</annotation></semantics></math>
+= 1.21 is greater than 1 and the value under the square root of the
+proportion formula is negative. The ratio formula gives 0.1254, the
+margin of error that the package reports for
+<code>poverty_rate</code>.</p>
+</div>
+<div id="references" class="section level2">
+<h2>References</h2>
+<script>
+// Chrome can leave out a hat that sits over a bar, such as the hat of the
+// estimated average in the formulas above. Written as a spacing character,
+// the hat is always drawn.
+document.querySelectorAll("math mover > mover + mo").forEach(function (mo) {
+  if (mo.textContent === "\u0302") {
+    mo.textContent = "\u02C6";
+  }
+});
+</script>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-folch2023covariance" class="csl-entry">
+Folch, David C., Seth Spielman, and Molly Graber. 2023. <span>“The
+Impact of Covariance on <span>American Community Survey</span> Margins
+of Error: Computational Alternatives.”</span> <em>Population Research
+and Policy Review</em> 42 (4): 55. <a href="https://doi.org/10.1007/s11113-023-09786-y">https://doi.org/10.1007/s11113-023-09786-y</a>.
+</div>
+<div id="ref-census2020understanding" class="csl-entry">
+U.S. Census Bureau. 2020. <em>Understanding and Using <span>American
+Community Survey</span> Data: What All Data Users Need to Know</em>.
+U.S. Government Publishing Office. <a href="https://www.census.gov/programs-surveys/acs/library/handbooks/general.html">https://www.census.gov/programs-surveys/acs/library/handbooks/general.html</a>.
+</div>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+
+</body>
+</html>

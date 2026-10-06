@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Updating code written for versions 0.1 and 0.2</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Updating code written for versions 0.1 and
+0.2</h1>
+
+
+<div id="TOC">
+<ul>
+<li><a href="#summary-of-changes" id="toc-summary-of-changes">Summary of
+changes</a></li>
+<li><a href="#drive-time-areas-saved-with-versions-0.1-and-0.2" id="toc-drive-time-areas-saved-with-versions-0.1-and-0.2">Drive-time
+areas saved with versions 0.1 and 0.2</a></li>
+<li><a href="#running-an-older-analysis-again" id="toc-running-an-older-analysis-again">Running an older analysis
+again</a></li>
+<li><a href="#building-drive-time-areas-again" id="toc-building-drive-time-areas-again">Building drive-time areas
+again</a></li>
+<li><a href="#saved-results-in-the-cache" id="toc-saved-results-in-the-cache">Saved results in the cache</a></li>
+</ul>
+</div>
+
+<p>Scripts written for catchmentACS 0.1 or 0.2 can stop with an error
+under version 0.6.0, or run and give different results.
+<code>vignette(&quot;porting-v03-to-v04&quot;, package = &quot;catchmentACS&quot;)</code>
+and
+<code>vignette(&quot;porting-v04-to-v05&quot;, package = &quot;catchmentACS&quot;)</code>
+describe the changes of versions 0.4 and 0.5 in more detail.</p>
+<p>Several errors about drive-time areas (isochrones), such as a missing
+column or the wrong coordinate reference system, refer to this article.
+The section on saved drive-time areas explains them.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(catchmentACS)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">library</span>(sf)  <span class="co"># needed to subset the bundled sf objects with [</span></span></code></pre></div>
+<p>Two files that ship with the package stand in for data of your own.
+<code>fixture_032_3site_fresh.rds</code> holds the inputs and results of
+a run with version 0.2 for three points at public places in Birmingham,
+Mobile, and Huntsville, Alabama: 10-minute areas from the public OSRM
+(Open Source Routing Machine) demo server and American Community Survey
+(ACS) estimates for 2019–2023. The second file,
+<code>legacy_2025_isochrones.rds</code>, holds circles around 20 made-up
+sites, used here as drive-time areas that pass the current checks.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="co"># Inputs and results of a run with version 0.2</span></span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>old_run <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">system.file</span>(</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>  <span class="st">&quot;testdata&quot;</span>, <span class="st">&quot;fixture_032_3site_fresh.rds&quot;</span>,</span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>  <span class="at">package =</span> <span class="st">&quot;catchmentACS&quot;</span>, <span class="at">mustWork =</span> <span class="cn">TRUE</span></span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>))</span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a><span class="co"># Drive-time areas saved with version 0.2</span></span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a>old_areas <span class="ot">&lt;-</span> old_run<span class="sc">$</span>iso_sf_v2</span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a><span class="co"># Drive-time areas that pass the current checks</span></span>
+<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a>example_areas <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">system.file</span>(</span>
+<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a>  <span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;legacy_2025_isochrones.rds&quot;</span>,</span>
+<span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a>  <span class="at">package =</span> <span class="st">&quot;catchmentACS&quot;</span>, <span class="at">mustWork =</span> <span class="cn">TRUE</span></span>
+<span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a>))</span></code></pre></div>
+<div id="summary-of-changes" class="section level2">
+<h2>Summary of changes</h2>
+<div style="overflow-x: auto;">
+<table>
+<colgroup>
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Version</th>
+<th align="left">Change</th>
+<th align="left">Effect on an older script</th>
+<th align="left">What to do</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">0.3</td>
+<td align="left">Drive-time areas need a <code>ring_topology</code>
+column equal to <code>&quot;cumulative&quot;</code></td>
+<td align="left">Saved areas give an error</td>
+<td align="left">Add the column, or join bands with
+<code>cacs_rings_to_cumulative()</code></td>
+</tr>
+<tr class="even">
+<td align="left">0.3</td>
+<td align="left"><code>cacs_isochrone()</code> joins the bands that the
+osrm package returns for several drive times into cumulative areas</td>
+<td align="left">Saved areas built with OSRM for several drive times may
+be bands, and the estimates for their longer drive times then cover only
+a band</td>
+<td align="left">Check them as below; build them again, or join them
+with <code>cacs_rings_to_cumulative()</code> after adding
+<code>isomin</code> and <code>isomax</code></td>
+</tr>
+<tr class="odd">
+<td align="left">0.3, 0.4</td>
+<td align="left">Without <code>res</code>, OSRM areas use
+<code>30L</code> with <code>osrm_mode = &quot;demo&quot;</code> (the default) and
+<code>70L</code> with <code>osrm_mode = &quot;docker&quot;</code> (50 in version
+0.2)</td>
+<td align="left">New areas differ from the old ones</td>
+<td align="left">Set <code>res = 50L</code> for the grid of version 0.2
+(<code>iso_args = list(res = 50L)</code> in
+<code>cacs_run()</code>)</td>
+</tr>
+<tr class="even">
+<td align="left">0.3</td>
+<td align="left"><code>ssi_rate</code> was
+<code>B19056_001 / B11001_001</code> and is now
+<code>B19056_002 / B19056_001</code></td>
+<td align="left">Old values cannot be compared, and ACS data downloaded
+with the default variables of version 0.2 give <code>NA</code></td>
+<td align="left">Download the ACS data again</td>
+</tr>
+<tr class="odd">
+<td align="left">0.5</td>
+<td align="left">The weights that average medians and per-person values
+sum to one for each variable</td>
+<td align="left">Old values from a call with more than one variable are
+too small: when every tract has all of them, an old value is the correct
+one divided by the number of variables</td>
+<td align="left">Compute them again</td>
+</tr>
+<tr class="even">
+<td align="left">0.4</td>
+<td align="left">The rows of <code>rates_breakdown</code> in
+<code>summary()</code> are no longer shifted</td>
+<td align="left">Old means, standard deviations, and counts of missing
+values belong to other rates</td>
+<td align="left">Compute them again</td>
+</tr>
+<tr class="odd">
+<td align="left">0.4</td>
+<td align="left"><code>tibble::as_tibble()</code>, and functions that
+call it, put the rows of the five rates first within each site and drive
+time</td>
+<td align="left">In versions 0.4 to 0.5.1, rows picked by position after
+<code>tibble::as_tibble()</code> differed, and
+<code>dplyr::semi_join()</code>, <code>dplyr::anti_join()</code>, and
+summaries after <code>dplyr::rowwise()</code> could give wrong results
+without a warning</td>
+<td align="left">Nothing from version 0.6.0 on, which keeps the order
+again. <code>rate_first = TRUE</code>, or
+<code>options(catchmentACS.rate_first_default = TRUE)</code> for calls
+from your own code, puts the rate rows first</td>
+</tr>
+<tr class="even">
+<td align="left">0.3</td>
+<td align="left">A result saved in the cache needs a checksum file</td>
+<td align="left">Results saved by versions 0.1 and 0.2 are not used</td>
+<td align="left">Nothing; the old cache folder can be deleted by hand
+(see <code>?cacs_cache_dir</code>)</td>
+</tr>
+<tr class="odd">
+<td align="left">0.2</td>
+<td align="left"><code>cacs_acs_prefetch()</code> leaves out tracts
+numbered 9900 or higher (water and special-purpose tracts) and tracts
+with no area</td>
+<td align="left">Fewer tracts, with a message</td>
+<td align="left"><code>drop_water_tracts = FALSE</code> keeps them in a
+new download; data saved in the cache without them need
+<code>force_refresh = TRUE</code></td>
+</tr>
+<tr class="even">
+<td align="left">0.2, 0.3</td>
+<td align="left">Results gain the columns <code>n_tracts_num</code>,
+<code>n_tracts_den</code>, and <code>ring_topology</code></td>
+<td align="left">Columns move</td>
+<td align="left">Pick columns by name</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="drive-time-areas-saved-with-versions-0.1-and-0.2" class="section level2">
+<h2>Drive-time areas saved with versions 0.1 and 0.2</h2>
+<p><code>cacs_intersect_weight()</code> checks the drive-time areas it
+is given, and so does <code>cacs_run()</code> with
+<code>precomputed_isochrones</code>, after it downloads the ACS
+estimates if <code>acs</code> is not supplied. The areas must be an
+<code>sf</code> object in EPSG:4326 (longitude and latitude) with the 16
+columns of a <code>cacs_isochrone()</code> result, including
+<code>ring_topology</code>, which versions 0.1 and 0.2 did not have.
+<code>cacs_validate_iso()</code> makes the same checks of the columns,
+their types, and the coordinate reference system, and returns one row
+for each problem, with a line of R code for a fix in its
+<code>example</code> column. Checking saved areas with it first avoids a
+download that ends in an error:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>issues <span class="ot">&lt;-</span> <span class="fu">cacs_validate_iso</span>(old_areas)</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>issues[, <span class="fu">c</span>(<span class="st">&quot;check&quot;</span>, <span class="st">&quot;col&quot;</span>, <span class="st">&quot;actual&quot;</span>)]</span></code></pre></div>
+<pre><code>#&gt; # A tibble: 1 × 3
+#&gt;   check              col           actual 
+#&gt;   &lt;chr&gt;              &lt;chr&gt;         &lt;chr&gt;  
+#&gt; 1 iso_missing_column ring_topology missing</code></pre>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">writeLines</span>(issues<span class="sc">$</span>example)</span></code></pre></div>
+<pre><code>#&gt; iso_sf$ring_topology &lt;- &quot;cumulative&quot;</code></pre>
+<p>This fix is right only if each row holds the whole area reachable
+within its <code>drive_time_min</code>, so that each area contains the
+shorter ones of the same site. <code>cacs_validate_iso()</code> flags
+rows whose <code>isomin</code> is above 0, but it does not compare the
+areas. These areas have one drive time for each site, so there is
+nothing to compare.</p>
+<p>Drive-time bands, also called rings, cover only the minutes between
+two drive times, so a band shares no area with the band inside it. When
+several drive times are requested in one call, the osrm package returns
+bands, and since version 0.3 <code>cacs_isochrone()</code> joins them
+into cumulative areas. Saved areas that versions 0.1 and 0.2 built with
+OSRM for several drive times may be bands. The share of a shorter area
+that lies inside the longer one tells bands from cumulative areas, as in
+this example of one site with two bands:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>make_square <span class="ot">&lt;-</span> <span class="cf">function</span>(xmin, ymin, xmax, ymax) {</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>  sf<span class="sc">::</span><span class="fu">st_polygon</span>(<span class="fu">list</span>(<span class="fu">rbind</span>(</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>    <span class="fu">c</span>(xmin, ymin), <span class="fu">c</span>(xmax, ymin), <span class="fu">c</span>(xmax, ymax),</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>    <span class="fu">c</span>(xmin, ymax), <span class="fu">c</span>(xmin, ymin)</span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>  )))</span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>}</span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>core <span class="ot">&lt;-</span> <span class="fu">make_square</span>(<span class="sc">-</span><span class="fl">87.10</span>, <span class="fl">33.00</span>, <span class="sc">-</span><span class="fl">87.00</span>, <span class="fl">33.10</span>)</span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a><span class="co"># Two bands: 0 to 5 minutes, and 5 to 10 minutes (a larger square</span></span>
+<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a><span class="co"># with the first one cut out)</span></span>
+<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a>bands <span class="ot">&lt;-</span> sf<span class="sc">::</span><span class="fu">st_sf</span>(</span>
+<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a>  <span class="at">site_id =</span> <span class="st">&quot;S01&quot;</span>,</span>
+<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a>  <span class="at">isomin =</span> <span class="fu">c</span>(<span class="dv">0</span><span class="dt">L</span>, <span class="dv">5</span><span class="dt">L</span>),</span>
+<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a>  <span class="at">isomax =</span> <span class="fu">c</span>(<span class="dv">5</span><span class="dt">L</span>, <span class="dv">10</span><span class="dt">L</span>),</span>
+<span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a>  <span class="at">geometry =</span> sf<span class="sc">::</span><span class="fu">st_sfc</span>(</span>
+<span id="cb7-16"><a href="#cb7-16" tabindex="-1"></a>    core,</span>
+<span id="cb7-17"><a href="#cb7-17" tabindex="-1"></a>    sf<span class="sc">::</span><span class="fu">st_difference</span>(<span class="fu">make_square</span>(<span class="sc">-</span><span class="fl">87.20</span>, <span class="fl">32.90</span>, <span class="sc">-</span><span class="fl">86.90</span>, <span class="fl">33.20</span>), core),</span>
+<span id="cb7-18"><a href="#cb7-18" tabindex="-1"></a>    <span class="at">crs =</span> <span class="dv">4326</span></span>
+<span id="cb7-19"><a href="#cb7-19" tabindex="-1"></a>  )</span>
+<span id="cb7-20"><a href="#cb7-20" tabindex="-1"></a>)</span>
+<span id="cb7-21"><a href="#cb7-21" tabindex="-1"></a></span>
+<span id="cb7-22"><a href="#cb7-22" tabindex="-1"></a><span class="co"># Share of the shorter area that lies inside the longer one</span></span>
+<span id="cb7-23"><a href="#cb7-23" tabindex="-1"></a>inside_share <span class="ot">&lt;-</span> <span class="cf">function</span>(shorter, longer) {</span>
+<span id="cb7-24"><a href="#cb7-24" tabindex="-1"></a>  overlap <span class="ot">&lt;-</span> sf<span class="sc">::</span><span class="fu">st_intersection</span>(sf<span class="sc">::</span><span class="fu">st_geometry</span>(longer),</span>
+<span id="cb7-25"><a href="#cb7-25" tabindex="-1"></a>                                 sf<span class="sc">::</span><span class="fu">st_geometry</span>(shorter))</span>
+<span id="cb7-26"><a href="#cb7-26" tabindex="-1"></a>  <span class="fu">sum</span>(<span class="fu">as.numeric</span>(sf<span class="sc">::</span><span class="fu">st_area</span>(overlap))) <span class="sc">/</span></span>
+<span id="cb7-27"><a href="#cb7-27" tabindex="-1"></a>    <span class="fu">sum</span>(<span class="fu">as.numeric</span>(sf<span class="sc">::</span><span class="fu">st_area</span>(shorter)))</span>
+<span id="cb7-28"><a href="#cb7-28" tabindex="-1"></a>}</span>
+<span id="cb7-29"><a href="#cb7-29" tabindex="-1"></a><span class="fu">inside_share</span>(<span class="at">shorter =</span> bands[<span class="dv">1</span>, ], <span class="at">longer =</span> bands[<span class="dv">2</span>, ])</span></code></pre></div>
+<pre><code>#&gt; [1] 0</code></pre>
+<p><code>cacs_rings_to_cumulative()</code> joins each band with the
+bands inside it, using the columns <code>isomin</code> and
+<code>isomax</code> (the start and end of each band, in minutes):</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>cumulative <span class="ot">&lt;-</span> <span class="fu">cacs_rings_to_cumulative</span>(bands)</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>sf<span class="sc">::</span><span class="fu">st_drop_geometry</span>(cumulative)</span></code></pre></div>
+<pre><code>#&gt;   site_id isomin isomax drive_time_min ring_topology
+#&gt; 1     S01      0      5              5    cumulative
+#&gt; 2     S01      0     10             10    cumulative</code></pre>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="fu">inside_share</span>(<span class="at">shorter =</span> cumulative[<span class="dv">1</span>, ], <span class="at">longer =</span> cumulative[<span class="dv">2</span>, ])</span></code></pre></div>
+<pre><code>#&gt; [1] 1</code></pre>
+<p>The result still lacks the other columns of a
+<code>cacs_isochrone()</code> result. For areas made by another tool,
+these columns can hold the values that <code>cacs_isochrone()</code>
+gives an area built without a problem, with the meanings given in the
+Value section of <code>?cacs_isochrone</code>. <code>provider</code> and
+<code>provider_requested</code> must each be one of the four routing
+service names, <code>&quot;osrm&quot;</code>, <code>&quot;ors&quot;</code>,
+<code>&quot;mapbox&quot;</code>, or <code>&quot;r5r&quot;</code>, and <code>provider</code>
+is copied into the result, so for such areas it is only a label:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>areas <span class="ot">&lt;-</span> cumulative</span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>areas<span class="sc">$</span>provider <span class="ot">&lt;-</span> <span class="st">&quot;osrm&quot;</span></span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a>areas<span class="sc">$</span>provider_requested <span class="ot">&lt;-</span> <span class="st">&quot;osrm&quot;</span></span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a>areas<span class="sc">$</span>provider_downgrade <span class="ot">&lt;-</span> <span class="cn">FALSE</span></span>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a>areas<span class="sc">$</span>profile <span class="ot">&lt;-</span> <span class="st">&quot;car&quot;</span></span>
+<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a>areas<span class="sc">$</span>routing_engine_version <span class="ot">&lt;-</span> <span class="st">&quot;osrm-pkg/unknown&quot;</span></span>
+<span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a>areas<span class="sc">$</span>polygon_simplification_tolerance <span class="ot">&lt;-</span> <span class="cn">NA_real_</span></span>
+<span id="cb13-8"><a href="#cb13-8" tabindex="-1"></a>areas<span class="sc">$</span>osm_snapshot_date <span class="ot">&lt;-</span> <span class="st">&quot;unknown&quot;</span></span>
+<span id="cb13-9"><a href="#cb13-9" tabindex="-1"></a>areas<span class="sc">$</span>osm_snapshot_status <span class="ot">&lt;-</span> <span class="st">&quot;unknown_best_effort&quot;</span></span>
+<span id="cb13-10"><a href="#cb13-10" tabindex="-1"></a>areas<span class="sc">$</span>generated_at <span class="ot">&lt;-</span> <span class="fu">Sys.time</span>()</span>
+<span id="cb13-11"><a href="#cb13-11" tabindex="-1"></a>areas<span class="sc">$</span>isochrone_empty <span class="ot">&lt;-</span> <span class="cn">FALSE</span></span>
+<span id="cb13-12"><a href="#cb13-12" tabindex="-1"></a>areas<span class="sc">$</span>failure_reason <span class="ot">&lt;-</span> <span class="cn">NA_character_</span></span>
+<span id="cb13-13"><a href="#cb13-13" tabindex="-1"></a>areas<span class="sc">$</span>retry_count <span class="ot">&lt;-</span> <span class="dv">1</span><span class="dt">L</span></span>
+<span id="cb13-14"><a href="#cb13-14" tabindex="-1"></a></span>
+<span id="cb13-15"><a href="#cb13-15" tabindex="-1"></a><span class="fu">nrow</span>(<span class="fu">cacs_validate_iso</span>(areas))</span></code></pre></div>
+<pre><code>#&gt; [1] 0</code></pre>
+<p>For example, <code>cacs_run()</code> uses an area only when its
+<code>isochrone_empty</code> is <code>FALSE</code> and its
+<code>failure_reason</code> is <code>NA</code>. An
+<code>isochrone_empty</code> of <code>NA</code> or a
+<code>failure_reason</code> of <code>&quot;&quot;</code> passes the checks, but
+the area then counts as a routing failure.</p>
+<p><code>cacs_intersect_weight()</code> takes areas only in EPSG:4326,
+and <code>cacs_validate_iso()</code> reports areas in another
+system:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a>bad_crs <span class="ot">&lt;-</span> sf<span class="sc">::</span><span class="fu">st_transform</span>(example_areas[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, ], <span class="dv">4269</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a><span class="fu">cacs_validate_iso</span>(bad_crs) <span class="sc">|&gt;</span></span>
+<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(check <span class="sc">==</span> <span class="st">&quot;iso_crs&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(check, actual, expected, example)</span></code></pre></div>
+<pre><code>#&gt; # A tibble: 1 × 4
+#&gt;   check   actual    expected  example                                 
+#&gt;   &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;                                   
+#&gt; 1 iso_crs EPSG:4269 EPSG:4326 iso_sf &lt;- sf::st_transform(iso_sf, 4326)</code></pre>
+<p><code>isochrone_empty</code> and <code>provider_downgrade</code> must
+be logical, and <code>drive_time_min</code> and <code>retry_count</code>
+integers:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a>bad_type <span class="ot">&lt;-</span> example_areas[<span class="dv">1</span>, ]</span>
+<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a>bad_type<span class="sc">$</span>provider_downgrade <span class="ot">&lt;-</span> <span class="cn">NA_character_</span></span>
+<span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a>issues <span class="ot">&lt;-</span> <span class="fu">cacs_validate_iso</span>(bad_type)</span>
+<span id="cb17-4"><a href="#cb17-4" tabindex="-1"></a>issues[, <span class="fu">c</span>(<span class="st">&quot;col&quot;</span>, <span class="st">&quot;actual&quot;</span>, <span class="st">&quot;expected&quot;</span>)]</span></code></pre></div>
+<pre><code>#&gt; # A tibble: 1 × 3
+#&gt;   col                actual      expected          
+#&gt;   &lt;chr&gt;              &lt;chr&gt;       &lt;chr&gt;             
+#&gt; 1 provider_downgrade &lt;character&gt; logical TRUE/FALSE</code></pre>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a><span class="fu">writeLines</span>(issues<span class="sc">$</span>example)</span></code></pre></div>
+<pre><code>#&gt; iso_sf$provider_downgrade &lt;- FALSE</code></pre>
+</div>
+<div id="running-an-older-analysis-again" class="section level2">
+<h2>Running an older analysis again</h2>
+<p>The run saved in <code>fixture_032_3site_fresh.rds</code> shows what
+changes when an analysis from version 0.2 is run again on its saved
+inputs. With the areas and the ACS estimates supplied,
+<code>cacs_run()</code> builds no areas and downloads nothing:</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a>old_sites <span class="ot">&lt;-</span> sf<span class="sc">::</span><span class="fu">st_drop_geometry</span>(old_run<span class="sc">$</span>sites_sf)</span>
+<span id="cb21-2"><a href="#cb21-2" tabindex="-1"></a>old_sites <span class="ot">&lt;-</span> old_sites[, <span class="fu">c</span>(<span class="st">&quot;site_id&quot;</span>, <span class="st">&quot;lon&quot;</span>, <span class="st">&quot;lat&quot;</span>)]</span>
+<span id="cb21-3"><a href="#cb21-3" tabindex="-1"></a>old_run_areas <span class="ot">&lt;-</span> old_run<span class="sc">$</span>iso_sf_v2</span>
+<span id="cb21-4"><a href="#cb21-4" tabindex="-1"></a>old_run_areas<span class="sc">$</span>ring_topology <span class="ot">&lt;-</span> <span class="st">&quot;cumulative&quot;</span></span>
+<span id="cb21-5"><a href="#cb21-5" tabindex="-1"></a></span>
+<span id="cb21-6"><a href="#cb21-6" tabindex="-1"></a>rerun <span class="ot">&lt;-</span> <span class="fu">cacs_run</span>(</span>
+<span id="cb21-7"><a href="#cb21-7" tabindex="-1"></a>  old_sites,</span>
+<span id="cb21-8"><a href="#cb21-8" tabindex="-1"></a>  <span class="at">state =</span> <span class="st">&quot;AL&quot;</span>,</span>
+<span id="cb21-9"><a href="#cb21-9" tabindex="-1"></a>  <span class="at">drive_times =</span> <span class="dv">10</span>,</span>
+<span id="cb21-10"><a href="#cb21-10" tabindex="-1"></a>  <span class="at">precomputed_isochrones =</span> old_run_areas,</span>
+<span id="cb21-11"><a href="#cb21-11" tabindex="-1"></a>  <span class="at">acs =</span> old_run<span class="sc">$</span>acs_sf,</span>
+<span id="cb21-12"><a href="#cb21-12" tabindex="-1"></a>  <span class="at">weight_args =</span> <span class="fu">list</span>(<span class="at">keep_tract_audit =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb21-13"><a href="#cb21-13" tabindex="-1"></a>  <span class="at">verbose =</span> <span class="cn">FALSE</span></span>
+<span id="cb21-14"><a href="#cb21-14" tabindex="-1"></a>)</span></code></pre></div>
+<pre><code>#&gt; Warning: Some rates are `NA` or use a replacement formula:
+#&gt; • `failure_origin = &quot;carrier&quot;`: 3 rate rows, `NA` because a count or margin of
+#&gt;   error that the rate needs is missing.
+#&gt; ℹ The failure_origin and moe_fallback_reason columns give the reason on each
+#&gt;   rate row.</code></pre>
+<p>The warning gives one line for each reason found among the rate rows,
+and here there is one: the rows whose <code>failure_origin</code> is
+<code>&quot;carrier&quot;</code>, rates that are <code>NA</code> because the
+estimate for the numerator or the denominator, or its margin of error
+(the half-width of its 90 percent confidence interval), is missing. Here
+they are the <code>ssi_rate</code> rows, one for each site. The new
+results compare with the saved ones as follows:</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a>compare <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">inner_join</span>(</span>
+<span id="cb23-2"><a href="#cb23-2" tabindex="-1"></a>  tibble<span class="sc">::</span><span class="fu">as_tibble</span>(old_run<span class="sc">$</span>result_run_v2) <span class="sc">|&gt;</span></span>
+<span id="cb23-3"><a href="#cb23-3" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">select</span>(site_id, variable, <span class="at">saved =</span> estimate),</span>
+<span id="cb23-4"><a href="#cb23-4" tabindex="-1"></a>  tibble<span class="sc">::</span><span class="fu">as_tibble</span>(rerun) <span class="sc">|&gt;</span></span>
+<span id="cb23-5"><a href="#cb23-5" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">select</span>(site_id, variable, <span class="at">new =</span> estimate),</span>
+<span id="cb23-6"><a href="#cb23-6" tabindex="-1"></a>  <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;site_id&quot;</span>, <span class="st">&quot;variable&quot;</span>)</span>
+<span id="cb23-7"><a href="#cb23-7" tabindex="-1"></a>)</span>
+<span id="cb23-8"><a href="#cb23-8" tabindex="-1"></a>dplyr<span class="sc">::</span><span class="fu">filter</span>(</span>
+<span id="cb23-9"><a href="#cb23-9" tabindex="-1"></a>  compare,</span>
+<span id="cb23-10"><a href="#cb23-10" tabindex="-1"></a>  site_id <span class="sc">==</span> <span class="st">&quot;AL_BHM_01&quot;</span>,</span>
+<span id="cb23-11"><a href="#cb23-11" tabindex="-1"></a>  variable <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;B01003_001&quot;</span>, <span class="st">&quot;B19013_001&quot;</span>, <span class="st">&quot;B19301_001&quot;</span>,</span>
+<span id="cb23-12"><a href="#cb23-12" tabindex="-1"></a>                  <span class="st">&quot;poverty_rate&quot;</span>, <span class="st">&quot;ssi_rate&quot;</span>)</span>
+<span id="cb23-13"><a href="#cb23-13" tabindex="-1"></a>)</span></code></pre></div>
+<pre><code>#&gt; # A tibble: 5 × 4
+#&gt;   site_id   variable         saved       new
+#&gt;   &lt;chr&gt;     &lt;chr&gt;            &lt;dbl&gt;     &lt;dbl&gt;
+#&gt; 1 AL_BHM_01 B01003_001   64233.    64233.   
+#&gt; 2 AL_BHM_01 B19013_001    5301.    68912.   
+#&gt; 3 AL_BHM_01 B19301_001    3949.    51332.   
+#&gt; 4 AL_BHM_01 poverty_rate     0.192     0.192
+#&gt; 5 AL_BHM_01 ssi_rate         1        NA</code></pre>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" tabindex="-1"></a><span class="co"># All other counts and rates at the three sites</span></span>
+<span id="cb25-2"><a href="#cb25-2" tabindex="-1"></a>same <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(</span>
+<span id="cb25-3"><a href="#cb25-3" tabindex="-1"></a>  compare,</span>
+<span id="cb25-4"><a href="#cb25-4" tabindex="-1"></a>  <span class="sc">!</span>variable <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;B19013_001&quot;</span>, <span class="st">&quot;B19301_001&quot;</span>, <span class="st">&quot;ssi_rate&quot;</span>)</span>
+<span id="cb25-5"><a href="#cb25-5" tabindex="-1"></a>)</span>
+<span id="cb25-6"><a href="#cb25-6" tabindex="-1"></a><span class="fu">all.equal</span>(same<span class="sc">$</span>saved, same<span class="sc">$</span>new)</span></code></pre></div>
+<pre><code>#&gt; [1] TRUE</code></pre>
+<p>The counts and four of the rates, 45 rows in all, did not change.
+Median household income (<code>B19013_001</code>) and per capita income
+(<code>B19301_001</code>) grew by the same factor wherever they have a
+value:</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" tabindex="-1"></a>proxies <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(compare, variable <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;B19013_001&quot;</span>, <span class="st">&quot;B19301_001&quot;</span>))</span>
+<span id="cb27-2"><a href="#cb27-2" tabindex="-1"></a>dplyr<span class="sc">::</span><span class="fu">mutate</span>(proxies, <span class="at">ratio =</span> new <span class="sc">/</span> saved)</span></code></pre></div>
+<pre><code>#&gt; # A tibble: 6 × 5
+#&gt;   site_id   variable   saved    new ratio
+#&gt;   &lt;chr&gt;     &lt;chr&gt;      &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;
+#&gt; 1 AL_BHM_01 B19013_001 5301. 68912.  13.0
+#&gt; 2 AL_BHM_01 B19301_001 3949. 51332.  13.0
+#&gt; 3 AL_HSV_01 B19013_001 5674. 73757.  13.0
+#&gt; 4 AL_HSV_01 B19301_001 3332. 43322.  13.0
+#&gt; 5 AL_MOB_01 B19013_001   NA     NA   NA  
+#&gt; 6 AL_MOB_01 B19301_001 1921. 24975.  13.0</code></pre>
+<p>The factor, 13, is the number of ACS variables in the run, in which
+every tract has a row for each variable. Before version 0.5.0, the
+weights that average medians and per-person values summed to one over
+all the variables of a site and drive time;
+<code>vignette(&quot;porting-v04-to-v05&quot;, package = &quot;catchmentACS&quot;)</code>
+describes the correction.</p>
+<p>In the saved results, <code>ssi_rate</code> is 1 at every site,
+because version 0.2 divided <code>B19056_001</code> by
+<code>B11001_001</code>, two counts of all households. It now divides
+the households with Supplemental Security Income in the past 12 months,
+<code>B19056_002</code>, by all households, <code>B19056_001</code>. The
+saved ACS estimates lack <code>B19056_002</code>:</p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" tabindex="-1"></a>cacs_acs_default_rates<span class="sc">$</span>ssi_rate</span></code></pre></div>
+<pre><code>#&gt;          num          den 
+#&gt; &quot;B19056_002&quot; &quot;B19056_001&quot;</code></pre>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" tabindex="-1"></a><span class="fu">setdiff</span>(<span class="fu">unlist</span>(cacs_acs_default_rates), old_run<span class="sc">$</span>acs_sf<span class="sc">$</span>variable)</span></code></pre></div>
+<pre><code>#&gt; [1] &quot;B19056_002&quot;</code></pre>
+<p>A new download with the default variables of
+<code>cacs_acs_prefetch()</code> or <code>cacs_run()</code> includes it,
+since it is in <code>cacs_acs_default_vars</code>.</p>
+<p>Tables made with <code>summary()</code> in version 0.2 are also
+affected. Until version 0.4, each row of its
+<code>rates_breakdown</code> element showed the mean, standard
+deviation, and count of missing values of the next rate in alphabetical
+order, and the last row those of the first rate. Version 0.4 corrected
+this and added per-site tables of the rates, which
+<code>cacs_summary_as_markdown()</code> formats as Markdown.</p>
+<p>Since version 0.3, <code>keep_tract_audit = TRUE</code>, passed above
+to <code>cacs_intersect_weight()</code> through
+<code>weight_args</code>, adds the attribute
+<code>cacs_tract_audit</code>. It has one row for each tract in each
+drive-time area, with the tract’s coverage weight, the share of its area
+inside the drive-time area. It can replace code that intersects the
+areas with tract boundaries to list the tracts:</p>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" tabindex="-1"></a>tracts <span class="ot">&lt;-</span> <span class="fu">attr</span>(rerun, <span class="st">&quot;cacs_tract_audit&quot;</span>)</span>
+<span id="cb33-2"><a href="#cb33-2" tabindex="-1"></a><span class="fu">names</span>(tracts)</span></code></pre></div>
+<pre><code>#&gt; [1] &quot;site_id&quot;        &quot;drive_time_min&quot; &quot;GEOID&quot;          &quot;area_wt&quot;       
+#&gt; [5] &quot;int_area_m2&quot;    &quot;tract_area_m2&quot;</code></pre>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" tabindex="-1"></a>dplyr<span class="sc">::</span><span class="fu">count</span>(tracts, site_id, drive_time_min, <span class="at">name =</span> <span class="st">&quot;tracts&quot;</span>)</span></code></pre></div>
+<pre><code>#&gt; # A tibble: 3 × 3
+#&gt;   site_id   drive_time_min tracts
+#&gt;   &lt;chr&gt;              &lt;int&gt;  &lt;int&gt;
+#&gt; 1 AL_BHM_01             10     37
+#&gt; 2 AL_HSV_01             10     42
+#&gt; 3 AL_MOB_01             10     49</code></pre>
+</div>
+<div id="building-drive-time-areas-again" class="section level2">
+<h2>Building drive-time areas again</h2>
+<p>Areas built again can differ from the saved ones. One reason is the
+OSRM grid resolution <code>res</code>: the osrm package draws each area
+from travel times to a grid of <code>res</code> by <code>res</code>
+points around the site. Without <code>res</code>, version 0.2 used 50;
+version 0.6.0 uses <code>30L</code> with
+<code>osrm_mode = &quot;demo&quot;</code>, the default, and <code>70L</code> with
+<code>osrm_mode = &quot;docker&quot;</code>. Version 0.2 dropped <code>res</code>
+from <code>iso_args</code> with a warning, so a script that gave it
+there used 50 as well. To build the areas on the grid of version 0.2,
+set <code>res = 50L</code> in <code>cacs_isochrone()</code>, or
+<code>iso_args = list(res = 50L)</code> in <code>cacs_run()</code>.
+<code>?cacs_isochrone</code> describes the grid, an option that changes
+the values, and the waiting time on the demo server. The road data of
+the server and the coordinates of the sites can change too.</p>
+</div>
+<div id="saved-results-in-the-cache" class="section level2">
+<h2>Saved results in the cache</h2>
+<p>Since version 0.3, a result saved in the cache is used only when the
+checksum file next to it (<code>.fingerprint</code>) is present and its
+checksum matches. Results saved by versions 0.1 and 0.2 have no checksum
+file, so the first run after the upgrade builds the areas and downloads
+the ACS estimates again. Versions 0.5.1 and earlier kept saved results
+in the user cache folder of the operating system, which version 0.6.0
+neither reads nor deletes; <code>?cacs_cache_dir</code> gives the path
+of that folder on each system, and the folder can be deleted by
+hand.</p>
+<p><code>cacs_set_cache(FALSE)</code> turns the cache off for the rest
+of the R session, so that a script uses no saved results. The option
+<code>catchmentACS.cache_dir</code> or the environment variable
+<code>CACS_CACHE_DIR</code> sets another cache folder (see
+<code>cacs_cache_dir()</code>). Results saved in the default folder,
+inside the temporary folder of the R session, are deleted when the
+session ends.</p>
+</div>
+
+
+
+<!-- code folding -->
+
+
+
+</body>
+</html>

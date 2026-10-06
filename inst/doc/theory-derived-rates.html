@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Rates and their margins of error</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+<style type="text/css">
+
+div.csl-bib-body { }
+div.csl-entry {
+clear: both;
+}
+.hanging div.csl-entry {
+margin-left:2em;
+text-indent:-2em;
+}
+div.csl-left-margin {
+min-width:2em;
+float:left;
+}
+div.csl-right-inline {
+margin-left:2em;
+padding-left:1em;
+}
+div.csl-indent {
+margin-left: 2em;
+}
+</style>
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Rates and their margins of error</h1>
+
+
+<div id="TOC">
+<ul>
+<li><a href="#a-rate-is-the-ratio-of-two-weighted-counts" id="toc-a-rate-is-the-ratio-of-two-weighted-counts">A rate is the ratio
+of two weighted counts</a></li>
+<li><a href="#the-five-rates" id="toc-the-five-rates">The five
+rates</a></li>
+<li><a href="#two-formulas-for-the-margin-of-error-of-a-rate" id="toc-two-formulas-for-the-margin-of-error-of-a-rate">Two formulas for
+the margin of error of a rate</a></li>
+<li><a href="#the-formula-used-for-each-rate" id="toc-the-formula-used-for-each-rate">The formula used for each
+rate</a></li>
+<li><a href="#two-rates-computed-by-hand" id="toc-two-rates-computed-by-hand">Two rates computed by hand</a></li>
+<li><a href="#snap_rate-with-the-ratio-formula" id="toc-snap_rate-with-the-ratio-formula"><code>snap_rate</code> with
+the ratio formula</a></li>
+<li><a href="#labor_force_participation-with-the-proportion-formula" id="toc-labor_force_participation-with-the-proportion-formula"><code>labor_force_participation</code>
+with the proportion formula</a></li>
+<li><a href="#all-five-rates-of-the-example" id="toc-all-five-rates-of-the-example">All five rates of the
+example</a></li>
+<li><a href="#a-rate-whose-numerator-is-missing" id="toc-a-rate-whose-numerator-is-missing">A rate whose numerator is
+missing</a></li>
+<li><a href="#references" id="toc-references">References</a></li>
+</ul>
+</div>
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(catchmentACS)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">library</span>(sf)  <span class="co"># needed to subset the bundled sf objects with [</span></span></code></pre></div>
+<p>For each drive-time area, <code>cacs_derive_rates()</code> computes
+five rates from American Community Survey (ACS) estimates for census
+tracts, such as the share of people below the poverty level. Each rate
+comes with a margin of error (MOE), the half-width of its confidence
+interval, at the 90 percent level unless another level was set with the
+<code>level</code> argument of <code>cacs_propagate_moe()</code>, whose
+result <code>cacs_derive_rates()</code> takes. A <code>level</code>
+given to <code>cacs_derive_rates()</code> itself gives an error. The
+margin of error is computed with one of two formulas, chosen for each
+rate according to the argument <code>formula_dispatch</code>, and the
+last section of this article checks two rates against hand
+calculations.</p>
+<div id="a-rate-is-the-ratio-of-two-weighted-counts" class="section level2">
+<h2>A rate is the ratio of two weighted counts</h2>
+<p>Each rate divides one ACS count by another, such as people below the
+poverty level by people for whom poverty status is determined. We use
+the notation of
+<code>vignette(&quot;methodology&quot;, package = &quot;catchmentACS&quot;)</code>. For
+tract
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>j</mi><annotation encoding="application/x-tex">j</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mi>j</mi></msub><annotation encoding="application/x-tex">A_j</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>B</mi><mi>j</mi></msub><annotation encoding="application/x-tex">B_j</annotation></semantics></math>
+are the estimates of the numerator and the denominator, and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>w</mi><mrow><mi>s</mi><mi>j</mi></mrow><mrow><mi>c</mi><mi>o</mi><mi>v</mi></mrow></msubsup><annotation encoding="application/x-tex">w^{cov}_{sj}</annotation></semantics></math>
+is the coverage weight, the share of the tract’s area inside the
+drive-time area of site
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>s</mi><annotation encoding="application/x-tex">s</annotation></semantics></math>.
+The rate for the site is</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mi>R</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><mo>=</mo><mfrac><msub><mover><mi>A</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><msub><mover><mi>B</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub></mfrac><mo>,</mo><mspace width="2.0em"></mspace><msub><mover><mi>A</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><mo>=</mo><munder><mo>∑</mo><mi>j</mi></munder><msubsup><mi>w</mi><mrow><mi>s</mi><mi>j</mi></mrow><mrow><mi>c</mi><mi>o</mi><mi>v</mi></mrow></msubsup><mspace width="0.167em"></mspace><msub><mi>A</mi><mi>j</mi></msub><mo>,</mo><mspace width="2.0em"></mspace><msub><mover><mi>B</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><mo>=</mo><munder><mo>∑</mo><mi>j</mi></munder><msubsup><mi>w</mi><mrow><mi>s</mi><mi>j</mi></mrow><mrow><mi>c</mi><mi>o</mi><mi>v</mi></mrow></msubsup><mspace width="0.167em"></mspace><msub><mi>B</mi><mi>j</mi></msub><mi>.</mi></mrow><annotation encoding="application/x-tex">
+\widehat{R}_s = \frac{\widehat{A}_s}{\widehat{B}_s},
+\qquad
+\widehat{A}_s = \sum_j w^{cov}_{sj}\, A_j,
+\qquad
+\widehat{B}_s = \sum_j w^{cov}_{sj}\, B_j .
+</annotation></semantics></math></p>
+<p>The numerator and the denominator are counts and are combined like
+any other count, which assumes that whatever each of the two variables
+counts is spread evenly over the tract’s area <span class="citation">(Comber and Zeng 2019, 8)</span>. The coverage weights
+are explained in
+<code>vignette(&quot;theory-spatial-aggregation&quot;, package = &quot;catchmentACS&quot;)</code>.</p>
+<p>The package adds up the numerator and the denominator over the tracts
+first and divides once; it does not compute a rate for each tract. When
+the numerator and the denominator cover the same tracts and every
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>B</mi><mi>j</mi></msub><annotation encoding="application/x-tex">B_j</annotation></semantics></math>
+is positive, the result is an average of the tract rates
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>A</mi><mi>j</mi></msub><mi>/</mi><msub><mi>B</mi><mi>j</mi></msub></mrow><annotation encoding="application/x-tex">A_j / B_j</annotation></semantics></math>
+with weights
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>w</mi><mrow><mi>s</mi><mi>j</mi></mrow><mrow><mi>c</mi><mi>o</mi><mi>v</mi></mrow></msubsup><msub><mi>B</mi><mi>j</mi></msub></mrow><annotation encoding="application/x-tex">w^{cov}_{sj} B_j</annotation></semantics></math>,
+the part of each tract’s denominator counted in the drive-time area:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mi>R</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><mo>=</mo><munder><mo>∑</mo><mi>j</mi></munder><mfrac><mrow><msubsup><mi>w</mi><mrow><mi>s</mi><mi>j</mi></mrow><mrow><mi>c</mi><mi>o</mi><mi>v</mi></mrow></msubsup><mspace width="0.167em"></mspace><msub><mi>B</mi><mi>j</mi></msub></mrow><msub><mover><mi>B</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub></mfrac><mo>⋅</mo><mfrac><msub><mi>A</mi><mi>j</mi></msub><msub><mi>B</mi><mi>j</mi></msub></mfrac><mi>.</mi></mrow><annotation encoding="application/x-tex">
+\widehat{R}_s = \sum_j \frac{w^{cov}_{sj}\, B_j}{\widehat{B}_s} \cdot \frac{A_j}{B_j}.
+</annotation></semantics></math></p>
+<p>An average of the tract rates weighted by coverage weight or by
+overlap area alone would ignore how large each tract’s denominator is.
+Because both counts of a tract get the same coverage weight, an area
+that overlaps only one tract has that tract’s rate.</p>
+<p>The rates are computed from the weighted counts alone, without the
+geometry.</p>
+</div>
+<div id="the-five-rates" class="section level2">
+<h2>The five rates</h2>
+<p>The numerator and denominator codes of the five rates are listed in
+<code>cacs_acs_default_rates</code>:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="co"># ACS codes of the numerator (num) and the denominator (den) of each rate</span></span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>cacs_acs_default_rates</span></code></pre></div>
+<pre><code>#&gt; $poverty_rate
+#&gt;          num          den 
+#&gt; &quot;B17001_002&quot; &quot;B17001_001&quot; 
+#&gt; 
+#&gt; $snap_rate
+#&gt;          num          den 
+#&gt; &quot;B22003_002&quot; &quot;B22003_001&quot; 
+#&gt; 
+#&gt; $ssi_rate
+#&gt;          num          den 
+#&gt; &quot;B19056_002&quot; &quot;B19056_001&quot; 
+#&gt; 
+#&gt; $unemp_rate
+#&gt;          num          den 
+#&gt; &quot;B23025_005&quot; &quot;B23025_003&quot; 
+#&gt; 
+#&gt; $labor_force_participation
+#&gt;          num          den 
+#&gt; &quot;B23025_002&quot; &quot;B23025_001&quot;</code></pre>
+<table>
+<colgroup>
+<col width="33%" />
+<col width="33%" />
+<col width="33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Rate</th>
+<th>Numerator</th>
+<th>Denominator</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>poverty_rate</code></td>
+<td>people whose income in the past 12 months was below the poverty
+level (<code>B17001_002</code>)</td>
+<td>people for whom poverty status is determined
+(<code>B17001_001</code>)</td>
+</tr>
+<tr class="even">
+<td><code>snap_rate</code></td>
+<td>households that received Food Stamps or the Supplemental Nutrition
+Assistance Program (SNAP) in the past 12 months
+(<code>B22003_002</code>)</td>
+<td>all households (<code>B22003_001</code>)</td>
+</tr>
+<tr class="odd">
+<td><code>ssi_rate</code></td>
+<td>households with Supplemental Security Income (SSI) in the past 12
+months (<code>B19056_002</code>)</td>
+<td>all households (<code>B19056_001</code>)</td>
+</tr>
+<tr class="even">
+<td><code>unemp_rate</code></td>
+<td>unemployed people in the civilian labor force
+(<code>B23025_005</code>)</td>
+<td>the civilian labor force, among people 16 years and over
+(<code>B23025_003</code>)</td>
+</tr>
+<tr class="odd">
+<td><code>labor_force_participation</code></td>
+<td>people in the labor force, including the armed forces
+(<code>B23025_002</code>)</td>
+<td>people 16 years and over (<code>B23025_001</code>)</td>
+</tr>
+</tbody>
+</table>
+<p>In each rate the numerator is part of the denominator: the people or
+households it counts are among those that the denominator counts.
+<code>unemp_rate</code> and <code>labor_force_participation</code> come
+from the same ACS table, <code>B23025</code>, but divide by different
+counts: the civilian labor force for the unemployment rate, and everyone
+16 years and over for labor force participation.</p>
+<p>The two counts of a rate are summed over different tracts when a
+tract in the area has a row for one of the two codes and not for the
+other. The package keeps rows whose estimate is missing, and a rate that
+needs such a tract is <code>NA</code> rather than wrong. The two counts
+cover different tracts when those rows are dropped before
+<code>cacs_intersect_weight()</code> runs, for example by a filter of
+your own. The numerator is then no longer part of the denominator, and
+the rate can be much larger or smaller than the share for the area, even
+above 1. No warning is given. The columns <code>n_tracts_num</code> and
+<code>n_tracts_den</code> of the rate row, described in the help page of
+<code>cacs_derive_rates()</code>, give the two numbers of tracts.</p>
+<p>These five are the only rates that <code>cacs_derive_rates()</code>
+computes. Its <code>rates</code> argument accepts only
+<code>cacs_acs_default_rates</code>; any other list, including a subset
+or a reordering of it, gives an error. Other rates, such as a poverty
+rate for children built from the age and sex groups of table
+<code>B17001</code>, can be computed from the results of
+<code>cacs_propagate_moe()</code> or <code>cacs_run()</code>. These have
+a row with the weighted count and its margin of error for each ACS count
+requested. A numerator that adds up several of these counts gets its
+margin of error from the formula that the Census Bureau’s handbook gives
+for a sum, which again treats the counts as independent <span class="citation">(U.S. Census Bureau 2020, chap. 8)</span>. The formulas
+below then give the margin of error of the rate.</p>
+</div>
+<div id="two-formulas-for-the-margin-of-error-of-a-rate" class="section level2">
+<h2>Two formulas for the margin of error of a rate</h2>
+<p>The Census Bureau’s handbook has a formula for a proportion (its
+formula 6) and one for a ratio (formula 7). A proportion is a ratio
+whose numerator is part of its denominator; the ratio formula is for a
+ratio whose numerator is not. Both compute the margin of error of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mover><mi>R</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><annotation encoding="application/x-tex">\widehat{R}_s</annotation></semantics></math>
+from the margins of error
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi><mo stretchy="false" form="prefix">(</mo><msub><mover><mi>A</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">M(\widehat{A}_s)</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi><mo stretchy="false" form="prefix">(</mo><msub><mover><mi>B</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">M(\widehat{B}_s)</annotation></semantics></math>
+of the two weighted counts <span class="citation">(U.S. Census Bureau
+2020, chap. 8)</span>:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right; padding-right: 0"><mtext mathvariant="normal">proportion formula:</mtext><mspace width="1.0em"></mspace><mi>M</mi><mo stretchy="false" form="prefix">(</mo><msub><mover><mi>R</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><mo stretchy="false" form="postfix">)</mo></mtd><mtd columnalign="left" style="text-align: left; padding-left: 0"><mo>=</mo><mfrac><msqrt><mrow><mi>M</mi><mo stretchy="false" form="prefix">(</mo><msub><mover><mi>A</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><msup><mo stretchy="false" form="postfix">)</mo><mn>2</mn></msup><mo>−</mo><msubsup><mover><mi>R</mi><mo accent="true">̂</mo></mover><mi>s</mi><mn>2</mn></msubsup><mspace width="0.167em"></mspace><mi>M</mi><mo stretchy="false" form="prefix">(</mo><msub><mover><mi>B</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><msup><mo stretchy="false" form="postfix">)</mo><mn>2</mn></msup></mrow></msqrt><msub><mover><mi>B</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub></mfrac><mo>,</mo></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right; padding-right: 0"><mtext mathvariant="normal">ratio formula:</mtext><mspace width="1.0em"></mspace><mi>M</mi><mo stretchy="false" form="prefix">(</mo><msub><mover><mi>R</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><mo stretchy="false" form="postfix">)</mo></mtd><mtd columnalign="left" style="text-align: left; padding-left: 0"><mo>=</mo><mfrac><msqrt><mrow><mi>M</mi><mo stretchy="false" form="prefix">(</mo><msub><mover><mi>A</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><msup><mo stretchy="false" form="postfix">)</mo><mn>2</mn></msup><mo>+</mo><msubsup><mover><mi>R</mi><mo accent="true">̂</mo></mover><mi>s</mi><mn>2</mn></msubsup><mspace width="0.167em"></mspace><mi>M</mi><mo stretchy="false" form="prefix">(</mo><msub><mover><mi>B</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><msup><mo stretchy="false" form="postfix">)</mo><mn>2</mn></msup></mrow></msqrt><mrow><mo stretchy="true" form="prefix">|</mo><msub><mover><mi>B</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><mo stretchy="true" form="postfix">|</mo></mrow></mfrac><mi>.</mi></mtd></mtr></mtable><annotation encoding="application/x-tex">
+\begin{aligned}
+\text{proportion formula:} \quad
+M(\widehat{R}_s) &amp;= \frac{\sqrt{M(\widehat{A}_s)^2 - \widehat{R}_s^2\, M(\widehat{B}_s)^2}}{\widehat{B}_s},\\
+\text{ratio formula:} \quad
+M(\widehat{R}_s) &amp;= \frac{\sqrt{M(\widehat{A}_s)^2 + \widehat{R}_s^2\, M(\widehat{B}_s)^2}}{\left| \widehat{B}_s \right|}.
+\end{aligned}
+</annotation></semantics></math></p>
+<p>The package’s warnings and the help page of
+<code>cacs_propagate_moe()</code> call them C1 and C2, and the columns
+<code>moe_formula_requested</code> and
+<code>moe_formula_effective</code> record them as
+<code>&quot;proportion_subset&quot;</code> and
+<code>&quot;general_ratio_conservative&quot;</code>. The ratio formula divides by
+the absolute value of the denominator, which the hand calculations below
+use as well; for the five rates, whose denominators are counts, that is
+the denominator itself.</p>
+<p>The two values under the square root differ by
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2</mn><msubsup><mover><mi>R</mi><mo accent="true">̂</mo></mover><mi>s</mi><mn>2</mn></msubsup><mi>M</mi><mo stretchy="false" form="prefix">(</mo><msub><mover><mi>B</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><msup><mo stretchy="false" form="postfix">)</mo><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">2 \widehat{R}_s^2 M(\widehat{B}_s)^2</annotation></semantics></math>,
+so the ratio formula never gives the narrower margin of error. How much
+wider it is varies from rate to rate and from one area to another, and
+<code>vignette(&quot;theory-moe-propagation&quot;, package = &quot;catchmentACS&quot;)</code>
+gives the factor. Both formulas start from margins of error of the
+weighted counts that treat the tract estimates as independent, an
+assumption discussed in the same article.</p>
+</div>
+<div id="the-formula-used-for-each-rate" class="section level2">
+<h2>The formula used for each rate</h2>
+<p>By default, <code>cacs_derive_rates()</code> and
+<code>cacs_run()</code> use the ratio formula for all five rates,
+although the numerator of each is part of its denominator. For these
+proportions the handbook gives the proportion formula, so the default is
+a choice of the package. The argument <code>formula_dispatch</code> of
+either function takes one of three values:</p>
+<div style="overflow-x: auto;">
+<table>
+<colgroup>
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Rate</th>
+<th><code>&quot;general_ratio_conservative&quot;</code> (default)</th>
+<th><code>&quot;auto&quot;</code></th>
+<th><code>&quot;proportion_subset&quot;</code></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>poverty_rate</code></td>
+<td>ratio</td>
+<td>proportion</td>
+<td>proportion</td>
+</tr>
+<tr class="even">
+<td><code>labor_force_participation</code></td>
+<td>ratio</td>
+<td>proportion</td>
+<td>proportion</td>
+</tr>
+<tr class="odd">
+<td><code>snap_rate</code></td>
+<td>ratio</td>
+<td>ratio</td>
+<td>ratio</td>
+</tr>
+<tr class="even">
+<td><code>ssi_rate</code></td>
+<td>ratio</td>
+<td>ratio</td>
+<td>ratio</td>
+</tr>
+<tr class="odd">
+<td><code>unemp_rate</code></td>
+<td>ratio</td>
+<td>ratio</td>
+<td>ratio</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><code>&quot;proportion_subset&quot;</code> gives the same formulas as
+<code>&quot;auto&quot;</code> and, in addition, a warning naming the three rates
+that keep the ratio formula. <code>unemp_rate</code> keeps the ratio
+formula with every value of <code>formula_dispatch</code>, although its
+numerator is part of its denominator, to reproduce the 2025 analysis the
+package was first written for. The column
+<code>moe_formula_requested</code> of each rate row records the formula
+chosen for the rate. For <code>snap_rate</code>, <code>ssi_rate</code>,
+and <code>unemp_rate</code>, the proportion formula can be applied by
+hand to the <code>estimate</code> and <code>moe</code> of the rows of
+the two ACS codes, unless the value under its square root is
+negative.</p>
+<p>If the proportion formula is chosen for a rate and the value under
+its square root is negative, the package uses the ratio formula for that
+row instead, as the handbook advises.
+<code>vignette(&quot;theory-moe-propagation&quot;, package = &quot;catchmentACS&quot;)</code>
+describes the columns that record the substitution.</p>
+</div>
+<div id="two-rates-computed-by-hand" class="section level2">
+<h2>Two rates computed by hand</h2>
+<p>The checks below compare hand calculations with the output of
+<code>cacs_derive_rates()</code> for two rates: <code>snap_rate</code>
+with the ratio formula and <code>labor_force_participation</code> with
+the proportion formula. For <code>labor_force_participation</code>, the
+margin of error from the ratio formula is also computed by hand, for
+comparison.</p>
+<p>The example is the 15-minute area around site <code>AL_SITE_03</code>
+in the data shipped with the package. Its drive-time area is a circle
+and its tract estimates are made-up values, so the rates show the
+arithmetic and are not estimates for any real area. The code runs only
+the three steps of <code>cacs_run()</code> that come after the download
+and the routing, and it uses <code>formula_dispatch = &quot;auto&quot;</code> so
+that two of the rates use the proportion formula:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="co"># Drive-time areas and made-up ACS data bundled with the package</span></span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>iso <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">system.file</span>(</span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>  <span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;legacy_2025_isochrones.rds&quot;</span>, <span class="at">package =</span> <span class="st">&quot;catchmentACS&quot;</span></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>))</span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>acs <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">system.file</span>(</span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>  <span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;sample_alabama_subset.rds&quot;</span>, <span class="at">package =</span> <span class="st">&quot;catchmentACS&quot;</span></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>))</span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a>site_id    <span class="ot">&lt;-</span> <span class="st">&quot;AL_SITE_03&quot;</span></span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a>drive_time <span class="ot">&lt;-</span> <span class="dv">15</span><span class="dt">L</span></span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a>iso_one <span class="ot">&lt;-</span> iso[</span>
+<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a>  iso<span class="sc">$</span>site_id <span class="sc">==</span> site_id <span class="sc">&amp;</span> iso<span class="sc">$</span>drive_time_min <span class="sc">==</span> drive_time, ,</span>
+<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a>  drop <span class="ot">=</span> <span class="cn">FALSE</span></span>
+<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a>]</span>
+<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a></span>
+<span id="cb4-17"><a href="#cb4-17" tabindex="-1"></a>weighted <span class="ot">&lt;-</span> <span class="fu">cacs_intersect_weight</span>(</span>
+<span id="cb4-18"><a href="#cb4-18" tabindex="-1"></a>  <span class="at">iso_sf           =</span> iso_one,</span>
+<span id="cb4-19"><a href="#cb4-19" tabindex="-1"></a>  <span class="at">acs_sf           =</span> acs,</span>
+<span id="cb4-20"><a href="#cb4-20" tabindex="-1"></a>  <span class="at">weight_method    =</span> <span class="st">&quot;area&quot;</span>,</span>
+<span id="cb4-21"><a href="#cb4-21" tabindex="-1"></a>  <span class="at">verbose          =</span> <span class="cn">FALSE</span></span>
+<span id="cb4-22"><a href="#cb4-22" tabindex="-1"></a>)</span>
+<span id="cb4-23"><a href="#cb4-23" tabindex="-1"></a>propagated <span class="ot">&lt;-</span> <span class="fu">cacs_propagate_moe</span>(weighted, <span class="at">verbose =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb4-24"><a href="#cb4-24" tabindex="-1"></a></span>
+<span id="cb4-25"><a href="#cb4-25" tabindex="-1"></a><span class="co"># &quot;auto&quot;: the proportion formula for poverty_rate and</span></span>
+<span id="cb4-26"><a href="#cb4-26" tabindex="-1"></a><span class="co"># labor_force_participation, the ratio formula for the other three rates</span></span>
+<span id="cb4-27"><a href="#cb4-27" tabindex="-1"></a>rates <span class="ot">&lt;-</span> <span class="fu">suppressWarnings</span>(</span>
+<span id="cb4-28"><a href="#cb4-28" tabindex="-1"></a>  <span class="fu">cacs_derive_rates</span>(propagated, <span class="at">formula_dispatch =</span> <span class="st">&quot;auto&quot;</span>, <span class="at">verbose =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb4-29"><a href="#cb4-29" tabindex="-1"></a>)</span></code></pre></div>
+<p><code>suppressWarnings()</code> hides the warning that
+<code>cacs_derive_rates()</code> gives at the end, which counts the rows
+where the ratio formula replaced the proportion formula.</p>
+<p>The checks read
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mover><mi>A</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><annotation encoding="application/x-tex">\widehat{A}_s</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mover><mi>B</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><annotation encoding="application/x-tex">\widehat{B}_s</annotation></semantics></math>,
+and their variances, the numbers that <code>cacs_derive_rates()</code>
+itself uses, from the attribute <code>cacs_aggregation_carriers</code>
+of the result of <code>cacs_intersect_weight()</code>.
+<code>cacs_derive_rates()</code> removes that attribute, so the checks
+below need the result of the earlier step, not a rate table or a result
+of <code>cacs_run()</code>, where it is <code>NULL</code>. The variances
+(<code>var_total_raw</code>) are squared standard errors (SE), so a
+margin of error is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi><mo stretchy="false" form="prefix">(</mo><msub><mover><mi>A</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mi>z</mi><mspace width="0.167em"></mspace><mrow><mi mathvariant="normal">S</mi><mi mathvariant="normal">E</mi></mrow><mo stretchy="false" form="prefix">(</mo><msub><mover><mi>A</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">M(\widehat{A}_s) = z\,\mathrm{SE}(\widehat{A}_s)</annotation></semantics></math>,
+with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi><mo>=</mo><mn>1.645</mn></mrow><annotation encoding="application/x-tex">z = 1.645</annotation></semantics></math>
+at the 90 percent level:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>z      <span class="ot">&lt;-</span> <span class="fl">1.645</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>totals <span class="ot">&lt;-</span> <span class="fu">attr</span>(weighted, <span class="st">&quot;cacs_aggregation_carriers&quot;</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a><span class="co"># The weighted count (est_total) or its variance (var_total_raw) for one ACS code</span></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>total_of <span class="ot">&lt;-</span> <span class="cf">function</span>(code, col) totals[[col]][totals<span class="sc">$</span>variable <span class="sc">==</span> code]</span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>totals <span class="sc">|&gt;</span></span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a>  <span class="fu">filter</span>(variable <span class="sc">%in%</span> <span class="fu">c</span>(</span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a>    <span class="st">&quot;B22003_002&quot;</span>, <span class="st">&quot;B22003_001&quot;</span>,   <span class="co"># snap_rate  num / den</span></span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a>    <span class="st">&quot;B23025_002&quot;</span>, <span class="st">&quot;B23025_001&quot;</span>,   <span class="co"># labor_force_participation num / den</span></span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a>    <span class="st">&quot;B17001_002&quot;</span>, <span class="st">&quot;B17001_001&quot;</span>    <span class="co"># poverty_rate num / den</span></span>
+<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a>  )) <span class="sc">|&gt;</span></span>
+<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a>  <span class="fu">select</span>(variable, est_total, var_total_raw, weight_sum, n_tracts)</span></code></pre></div>
+<pre><code>#&gt; # A tibble: 6 × 5
+#&gt;   variable   est_total var_total_raw weight_sum n_tracts
+#&gt;   &lt;chr&gt;          &lt;dbl&gt;         &lt;dbl&gt;      &lt;dbl&gt;    &lt;int&gt;
+#&gt; 1 B17001_001      8474       320617.          3        3
+#&gt; 2 B17001_002      2165        11820.          3        3
+#&gt; 3 B22003_001      3556        48137.          3        3
+#&gt; 4 B22003_002       891         2533.          3        3
+#&gt; 5 B23025_001      8136       208358.          3        3
+#&gt; 6 B23025_002      4359        73889.          3        3</code></pre>
+<p>In this example, <code>weight_sum</code> equals
+<code>n_tracts</code>: the 3 tracts lie entirely inside the drive-time
+area, so each weighted count is the plain sum of the tract
+estimates.</p>
+</div>
+<div id="snap_rate-with-the-ratio-formula" class="section level2">
+<h2><code>snap_rate</code> with the ratio formula</h2>
+<p><code>snap_rate</code> uses the ratio formula with every value of
+<code>formula_dispatch</code>. Written with the variances, the formula
+is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi><mo stretchy="false" form="prefix">(</mo><msub><mover><mi>R</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mi>z</mi><msqrt><mrow><mrow><mi mathvariant="normal">S</mi><mi mathvariant="normal">E</mi></mrow><mo stretchy="false" form="prefix">(</mo><msub><mover><mi>A</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><msup><mo stretchy="false" form="postfix">)</mo><mn>2</mn></msup><mo>+</mo><msubsup><mover><mi>R</mi><mo accent="true">̂</mo></mover><mi>s</mi><mn>2</mn></msubsup><mspace width="0.167em"></mspace><mrow><mi mathvariant="normal">S</mi><mi mathvariant="normal">E</mi></mrow><mo stretchy="false" form="prefix">(</mo><msub><mover><mi>B</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><msup><mo stretchy="false" form="postfix">)</mo><mn>2</mn></msup></mrow></msqrt><mspace width="0.167em"></mspace><mi>/</mi><mspace width="0.167em"></mspace><msub><mover><mi>B</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub></mrow><annotation encoding="application/x-tex">M(\widehat{R}_s) = z\sqrt{\mathrm{SE}(\widehat{A}_s)^2 + \widehat{R}_s^2\, \mathrm{SE}(\widehat{B}_s)^2}\,/\,\widehat{B}_s</annotation></semantics></math>:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>A_snap    <span class="ot">&lt;-</span> <span class="fu">total_of</span>(<span class="st">&quot;B22003_002&quot;</span>, <span class="st">&quot;est_total&quot;</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>B_snap    <span class="ot">&lt;-</span> <span class="fu">total_of</span>(<span class="st">&quot;B22003_001&quot;</span>, <span class="st">&quot;est_total&quot;</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>VarA_snap <span class="ot">&lt;-</span> <span class="fu">total_of</span>(<span class="st">&quot;B22003_002&quot;</span>, <span class="st">&quot;var_total_raw&quot;</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>VarB_snap <span class="ot">&lt;-</span> <span class="fu">total_of</span>(<span class="st">&quot;B22003_001&quot;</span>, <span class="st">&quot;var_total_raw&quot;</span>)</span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>R_snap        <span class="ot">&lt;-</span> A_snap <span class="sc">/</span> B_snap                                     <span class="co"># the rate A / B</span></span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>hand_moe_snap <span class="ot">&lt;-</span> z <span class="sc">*</span> <span class="fu">sqrt</span>(VarA_snap <span class="sc">+</span> R_snap<span class="sc">^</span><span class="dv">2</span> <span class="sc">*</span> VarB_snap) <span class="sc">/</span> <span class="fu">abs</span>(B_snap)</span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a>pkg_snap <span class="ot">&lt;-</span> rates <span class="sc">|&gt;</span></span>
+<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a>  <span class="fu">filter</span>(variable <span class="sc">==</span> <span class="st">&quot;snap_rate&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a>  <span class="fu">select</span>(estimate, moe, moe_formula_effective, moe_fallback)</span>
+<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a></span>
+<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a><span class="fu">list</span>(</span>
+<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a>  <span class="at">A =</span> A_snap, <span class="at">B =</span> B_snap,</span>
+<span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a>  <span class="at">hand_estimate =</span> R_snap,</span>
+<span id="cb7-16"><a href="#cb7-16" tabindex="-1"></a>  <span class="at">hand_moe_C2   =</span> hand_moe_snap,</span>
+<span id="cb7-17"><a href="#cb7-17" tabindex="-1"></a>  <span class="at">pkg           =</span> pkg_snap</span>
+<span id="cb7-18"><a href="#cb7-18" tabindex="-1"></a>)</span></code></pre></div>
+<pre><code>#&gt; $A
+#&gt; [1] 891
+#&gt; 
+#&gt; $B
+#&gt; [1] 3556
+#&gt; 
+#&gt; $hand_estimate
+#&gt; [1] 0.2505624
+#&gt; 
+#&gt; $hand_moe_C2
+#&gt; [1] 0.0344782
+#&gt; 
+#&gt; $pkg
+#&gt; # A tibble: 1 × 4
+#&gt;   estimate    moe moe_formula_effective      moe_fallback
+#&gt;      &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;                      &lt;lgl&gt;       
+#&gt; 1    0.251 0.0345 general_ratio_conservative FALSE</code></pre>
+<p>The package’s row records the ratio formula with no substitution, and
+its estimate, 0.2506, and margin of error, 0.0345, are the values
+computed by hand:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="fu">all.equal</span>(</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>  <span class="fu">c</span>(<span class="at">estimate =</span> R_snap, <span class="at">moe =</span> hand_moe_snap),</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>  <span class="fu">c</span>(<span class="at">estimate =</span> pkg_snap<span class="sc">$</span>estimate, <span class="at">moe =</span> pkg_snap<span class="sc">$</span>moe)</span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>)</span></code></pre></div>
+<pre><code>#&gt; [1] TRUE</code></pre>
+</div>
+<div id="labor_force_participation-with-the-proportion-formula" class="section level2">
+<h2><code>labor_force_participation</code> with the proportion
+formula</h2>
+<p>With <code>formula_dispatch = &quot;auto&quot;</code>,
+<code>labor_force_participation</code> uses the proportion formula,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi><mo stretchy="false" form="prefix">(</mo><msub><mover><mi>R</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mi>z</mi><msqrt><mrow><mrow><mi mathvariant="normal">S</mi><mi mathvariant="normal">E</mi></mrow><mo stretchy="false" form="prefix">(</mo><msub><mover><mi>A</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><msup><mo stretchy="false" form="postfix">)</mo><mn>2</mn></msup><mo>−</mo><msubsup><mover><mi>R</mi><mo accent="true">̂</mo></mover><mi>s</mi><mn>2</mn></msubsup><mspace width="0.167em"></mspace><mrow><mi mathvariant="normal">S</mi><mi mathvariant="normal">E</mi></mrow><mo stretchy="false" form="prefix">(</mo><msub><mover><mi>B</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub><msup><mo stretchy="false" form="postfix">)</mo><mn>2</mn></msup></mrow></msqrt><mspace width="0.167em"></mspace><mi>/</mi><mspace width="0.167em"></mspace><msub><mover><mi>B</mi><mo accent="true">̂</mo></mover><mi>s</mi></msub></mrow><annotation encoding="application/x-tex">M(\widehat{R}_s) = z\sqrt{\mathrm{SE}(\widehat{A}_s)^2 - \widehat{R}_s^2\, \mathrm{SE}(\widehat{B}_s)^2}\,/\,\widehat{B}_s</annotation></semantics></math>,
+unless the value under the square root is negative. The code computes
+that value, the margin of error from the proportion formula, and, for
+comparison, the margin of error from the ratio formula:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>A_lfp    <span class="ot">&lt;-</span> <span class="fu">total_of</span>(<span class="st">&quot;B23025_002&quot;</span>, <span class="st">&quot;est_total&quot;</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>B_lfp    <span class="ot">&lt;-</span> <span class="fu">total_of</span>(<span class="st">&quot;B23025_001&quot;</span>, <span class="st">&quot;est_total&quot;</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>VarA_lfp <span class="ot">&lt;-</span> <span class="fu">total_of</span>(<span class="st">&quot;B23025_002&quot;</span>, <span class="st">&quot;var_total_raw&quot;</span>)</span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>VarB_lfp <span class="ot">&lt;-</span> <span class="fu">total_of</span>(<span class="st">&quot;B23025_001&quot;</span>, <span class="st">&quot;var_total_raw&quot;</span>)</span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a>R_lfp       <span class="ot">&lt;-</span> A_lfp <span class="sc">/</span> B_lfp</span>
+<span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a>under_root  <span class="ot">&lt;-</span> VarA_lfp <span class="sc">-</span> R_lfp<span class="sc">^</span><span class="dv">2</span> <span class="sc">*</span> VarB_lfp           <span class="co"># under the proportion formula&#39;s root</span></span>
+<span id="cb11-8"><a href="#cb11-8" tabindex="-1"></a>hand_moe_C1 <span class="ot">&lt;-</span> z <span class="sc">*</span> <span class="fu">sqrt</span>(under_root) <span class="sc">/</span> B_lfp</span>
+<span id="cb11-9"><a href="#cb11-9" tabindex="-1"></a>hand_moe_C2 <span class="ot">&lt;-</span> z <span class="sc">*</span> <span class="fu">sqrt</span>(VarA_lfp <span class="sc">+</span> R_lfp<span class="sc">^</span><span class="dv">2</span> <span class="sc">*</span> VarB_lfp) <span class="sc">/</span> <span class="fu">abs</span>(B_lfp)  <span class="co"># for comparison</span></span>
+<span id="cb11-10"><a href="#cb11-10" tabindex="-1"></a></span>
+<span id="cb11-11"><a href="#cb11-11" tabindex="-1"></a><span class="fu">list</span>(</span>
+<span id="cb11-12"><a href="#cb11-12" tabindex="-1"></a>  <span class="at">under_root  =</span> under_root,     <span class="co"># positive, so the proportion formula can be used</span></span>
+<span id="cb11-13"><a href="#cb11-13" tabindex="-1"></a>  <span class="at">hand_moe_C1 =</span> hand_moe_C1,</span>
+<span id="cb11-14"><a href="#cb11-14" tabindex="-1"></a>  <span class="at">hand_moe_C2 =</span> hand_moe_C2     <span class="co"># the ratio formula</span></span>
+<span id="cb11-15"><a href="#cb11-15" tabindex="-1"></a>)</span></code></pre></div>
+<pre><code>#&gt; $under_root
+#&gt; [1] 14080.91
+#&gt; 
+#&gt; $hand_moe_C1
+#&gt; [1] 0.02399222
+#&gt; 
+#&gt; $hand_moe_C2
+#&gt; [1] 0.07392929</code></pre>
+<p>The value under the square root is positive, so the proportion
+formula applies. In this area, the proportion formula gives a margin of
+error of 0.0240, and the ratio formula gives 0.0739, 3.1 times as wide.
+The package’s row records the proportion formula with no substitution,
+and its margin of error is the value computed by hand:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>pkg_lfp <span class="ot">&lt;-</span> rates <span class="sc">|&gt;</span></span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>  <span class="fu">filter</span>(variable <span class="sc">==</span> <span class="st">&quot;labor_force_participation&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a>  <span class="fu">select</span>(estimate, moe, moe_formula_effective, moe_fallback, moe_fallback_reason)</span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a>pkg_lfp</span></code></pre></div>
+<pre><code>#&gt; # A tibble: 1 × 5
+#&gt;   estimate    moe moe_formula_effective moe_fallback moe_fallback_reason
+#&gt;      &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;                 &lt;lgl&gt;        &lt;chr&gt;              
+#&gt; 1    0.536 0.0240 proportion_subset     FALSE        n/a</code></pre>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="fu">all.equal</span>(hand_moe_C1, pkg_lfp<span class="sc">$</span>moe)</span></code></pre></div>
+<pre><code>#&gt; [1] TRUE</code></pre>
+</div>
+<div id="all-five-rates-of-the-example" class="section level2">
+<h2>All five rates of the example</h2>
+<p>The rate rows of the example record, for each rate, the formula
+chosen and the formula used, and the tract counts:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a>rates <span class="sc">|&gt;</span></span>
+<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a>  <span class="fu">filter</span>(estimand_family <span class="sc">==</span> <span class="st">&quot;derived_rate&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a>  <span class="fu">select</span>(variable, estimate, moe,</span>
+<span id="cb17-4"><a href="#cb17-4" tabindex="-1"></a>         moe_formula_requested, moe_formula_effective,</span>
+<span id="cb17-5"><a href="#cb17-5" tabindex="-1"></a>         moe_fallback, moe_fallback_reason,</span>
+<span id="cb17-6"><a href="#cb17-6" tabindex="-1"></a>         n_tracts, n_tracts_num, n_tracts_den) <span class="sc">|&gt;</span></span>
+<span id="cb17-7"><a href="#cb17-7" tabindex="-1"></a>  <span class="fu">print</span>(<span class="at">width =</span> <span class="cn">Inf</span>)</span></code></pre></div>
+<pre><code>#&gt; # A tibble: 5 × 10
+#&gt;   variable                  estimate     moe moe_formula_requested     
+#&gt;   &lt;chr&gt;                        &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;                     
+#&gt; 1 poverty_rate                0.255  0.0351  proportion_subset         
+#&gt; 2 snap_rate                   0.251  0.0345  general_ratio_conservative
+#&gt; 3 ssi_rate                    0.0852 0.0113  general_ratio_conservative
+#&gt; 4 unemp_rate                  0.0664 0.00838 general_ratio_conservative
+#&gt; 5 labor_force_participation   0.536  0.0240  proportion_subset         
+#&gt;   moe_formula_effective      moe_fallback moe_fallback_reason n_tracts
+#&gt;   &lt;chr&gt;                      &lt;lgl&gt;        &lt;chr&gt;                  &lt;int&gt;
+#&gt; 1 general_ratio_conservative TRUE         negative_variance         NA
+#&gt; 2 general_ratio_conservative FALSE        n/a                       NA
+#&gt; 3 general_ratio_conservative FALSE        n/a                       NA
+#&gt; 4 general_ratio_conservative FALSE        n/a                       NA
+#&gt; 5 proportion_subset          FALSE        n/a                       NA
+#&gt;   n_tracts_num n_tracts_den
+#&gt;          &lt;int&gt;        &lt;int&gt;
+#&gt; 1            3            3
+#&gt; 2            3            3
+#&gt; 3            3            3
+#&gt; 4            3            3
+#&gt; 5            3            3</code></pre>
+<p><code>moe_formula_requested</code> follows the <code>&quot;auto&quot;</code>
+column of the table in the formula section:
+<code>&quot;proportion_subset&quot;</code> for <code>poverty_rate</code> and
+<code>labor_force_participation</code>, and
+<code>&quot;general_ratio_conservative&quot;</code> for the other three rates.
+<code>moe_formula_effective</code> differs from it only for
+<code>poverty_rate</code>. <code>n_tracts</code> is <code>NA</code> on
+every rate row, and <code>n_tracts_num</code> equals
+<code>n_tracts_den</code> because each tract of the area has a row for
+every ACS code. <code>poverty_rate</code> records a substitution: in
+this area the value under the square root of its proportion formula is
+negative, so the ratio formula was used.
+<code>vignette(&quot;theory-moe-propagation&quot;, package = &quot;catchmentACS&quot;)</code>
+works through such a case by hand.</p>
+</div>
+<div id="a-rate-whose-numerator-is-missing" class="section level2">
+<h2>A rate whose numerator is missing</h2>
+<p>A rate and its margin of error are <code>NA</code> when the numerator
+or the denominator, or the margin of error of either, is missing for the
+site and drive time. This happens when one of the two ACS codes has no
+rows in the ACS data or when a tract in the area has a missing estimate
+or margin of error for one of them. It also happens for every rate of a
+pair with no tract left. The code below removes every row of the SSI
+numerator, <code>B19056_002</code>, from the example data and runs the
+three steps again, this time with the default value of
+<code>formula_dispatch</code>:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a>acs_drop <span class="ot">&lt;-</span> acs[sf<span class="sc">::</span><span class="fu">st_drop_geometry</span>(acs)<span class="sc">$</span>variable <span class="sc">!=</span> <span class="st">&quot;B19056_002&quot;</span>, ]</span>
+<span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a></span>
+<span id="cb19-3"><a href="#cb19-3" tabindex="-1"></a>weighted_d   <span class="ot">&lt;-</span> <span class="fu">cacs_intersect_weight</span>(</span>
+<span id="cb19-4"><a href="#cb19-4" tabindex="-1"></a>  <span class="at">iso_sf =</span> iso_one, <span class="at">acs_sf =</span> acs_drop,</span>
+<span id="cb19-5"><a href="#cb19-5" tabindex="-1"></a>  <span class="at">weight_method =</span> <span class="st">&quot;area&quot;</span>, <span class="at">verbose =</span> <span class="cn">FALSE</span></span>
+<span id="cb19-6"><a href="#cb19-6" tabindex="-1"></a>)</span>
+<span id="cb19-7"><a href="#cb19-7" tabindex="-1"></a>propagated_d <span class="ot">&lt;-</span> <span class="fu">cacs_propagate_moe</span>(weighted_d, <span class="at">verbose =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb19-8"><a href="#cb19-8" tabindex="-1"></a>rates_d      <span class="ot">&lt;-</span> <span class="fu">suppressWarnings</span>(<span class="fu">cacs_derive_rates</span>(propagated_d, <span class="at">verbose =</span> <span class="cn">FALSE</span>))</span>
+<span id="cb19-9"><a href="#cb19-9" tabindex="-1"></a></span>
+<span id="cb19-10"><a href="#cb19-10" tabindex="-1"></a>rates_d <span class="sc">|&gt;</span></span>
+<span id="cb19-11"><a href="#cb19-11" tabindex="-1"></a>  <span class="fu">filter</span>(estimand_family <span class="sc">==</span> <span class="st">&quot;derived_rate&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb19-12"><a href="#cb19-12" tabindex="-1"></a>  <span class="fu">select</span>(variable, estimate, moe,</span>
+<span id="cb19-13"><a href="#cb19-13" tabindex="-1"></a>         moe_fallback_reason, failure_origin, n_tracts_num, n_tracts_den) <span class="sc">|&gt;</span></span>
+<span id="cb19-14"><a href="#cb19-14" tabindex="-1"></a>  <span class="fu">print</span>(<span class="at">width =</span> <span class="cn">Inf</span>)</span></code></pre></div>
+<pre><code>#&gt; # A tibble: 5 × 7
+#&gt;   variable                  estimate      moe moe_fallback_reason failure_origin
+#&gt;   &lt;chr&gt;                        &lt;dbl&gt;    &lt;dbl&gt; &lt;chr&gt;               &lt;chr&gt;         
+#&gt; 1 poverty_rate                0.255   0.0351  n/a                 none          
+#&gt; 2 snap_rate                   0.251   0.0345  n/a                 none          
+#&gt; 3 ssi_rate                   NA      NA       n/a                 carrier       
+#&gt; 4 unemp_rate                  0.0664  0.00838 n/a                 none          
+#&gt; 5 labor_force_participation   0.536   0.0739  n/a                 none          
+#&gt;   n_tracts_num n_tracts_den
+#&gt;          &lt;int&gt;        &lt;int&gt;
+#&gt; 1            3            3
+#&gt; 2            3            3
+#&gt; 3           NA           NA
+#&gt; 4            3            3
+#&gt; 5            3            3</code></pre>
+<p>Here <code>suppressWarnings()</code> hides the warning at the end,
+which counts the rate rows that are <code>NA</code> for this reason.
+<code>ssi_rate</code> has <code>NA</code> in <code>estimate</code> and
+<code>moe</code>, and <code>&quot;carrier&quot;</code> in
+<code>failure_origin</code>, the column that records the step at which a
+row failed; <code>&quot;carrier&quot;</code> means that a count or margin of error
+that the rate needs is missing. <code>n_tracts_num</code> and
+<code>n_tracts_den</code> are <code>NA</code>, and
+<code>moe_fallback_reason</code> is <code>&quot;n/a&quot;</code> because no
+margin-of-error formula was applied. The other four rates have the same
+estimates as before. With the default <code>formula_dispatch</code>, all
+four use the ratio formula, so <code>labor_force_participation</code>
+now has the ratio-formula margin of error computed for comparison in the
+second check, and <code>poverty_rate</code> records no substitution.</p>
+</div>
+<div id="references" class="section level2 unnumbered">
+<h2 class="unnumbered">References</h2>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-comber2019spatial" class="csl-entry">
+Comber, Alexis, and Wen Zeng. 2019. <span>“Spatial Interpolation Using
+Areal Features: A Review of Methods and Opportunities Using New Forms of
+Data with Coded Illustrations.”</span> <em>Geography Compass</em> 13
+(10): e12465. <a href="https://doi.org/10.1111/gec3.12465">https://doi.org/10.1111/gec3.12465</a>.
+</div>
+<div id="ref-census2020understanding" class="csl-entry">
+U.S. Census Bureau. 2020. <em>Understanding and Using <span>American
+Community Survey</span> Data: What All Data Users Need to Know</em>.
+U.S. Government Publishing Office. <a href="https://www.census.gov/programs-surveys/acs/library/handbooks/general.html">https://www.census.gov/programs-surveys/acs/library/handbooks/general.html</a>.
+</div>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+
+</body>
+</html>

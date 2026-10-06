@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Updating code written for version 0.3</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Updating code written for version 0.3</h1>
+
+
+<div id="TOC">
+<ul>
+<li><a href="#the-value-of-the-expression-in-cacs_capture_conditions" id="toc-the-value-of-the-expression-in-cacs_capture_conditions">The
+value of the expression in
+<code>cacs_capture_conditions()</code></a></li>
+<li><a href="#drive-time-areas-built-on-the-public-osrm-server" id="toc-drive-time-areas-built-on-the-public-osrm-server">Drive-time
+areas built on the public OSRM server</a></li>
+<li><a href="#the-isochrone-column-of-the-list-column-form" id="toc-the-isochrone-column-of-the-list-column-form">The
+<code>isochrone</code> column of the list-column form</a></li>
+<li><a href="#the-row-order-of-as_tibble" id="toc-the-row-order-of-as_tibble">The row order of
+<code>as_tibble()</code></a></li>
+<li><a href="#rates-by-site-in-summary-print-and-markdown-tables" id="toc-rates-by-site-in-summary-print-and-markdown-tables">Rates by
+site in <code>summary()</code>, <code>print()</code>, and Markdown
+tables</a></li>
+<li><a href="#values-in-rates_breakdown-before-0.4" id="toc-values-in-rates_breakdown-before-0.4">Values in
+<code>rates_breakdown</code> before 0.4</a></li>
+</ul>
+</div>
+
+<p>catchmentACS 0.4 changed some defaults and outputs that code written
+for 0.3 may rely on. Estimates of medians and per-person values computed
+with 0.3 can also change, because of a correction made in 0.5.0 that
+<code>vignette(&quot;porting-v04-to-v05&quot;, package = &quot;catchmentACS&quot;)</code>
+describes with the other changes of that version.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(catchmentACS)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">library</span>(sf)  <span class="co"># needed to subset the bundled sf objects with [</span></span></code></pre></div>
+<p>The examples use two files installed with the package. One holds
+drive-time areas for 5, 10, and 15 minutes around made-up sites, drawn
+as circles, and the examples take those of <code>AL_SITE_07</code>. The
+other holds American Community Survey (ACS) estimates that are random
+numbers for small squares standing in for census tracts.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>iso <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">system.file</span>(</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>  <span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;legacy_2025_isochrones.rds&quot;</span>, <span class="at">package =</span> <span class="st">&quot;catchmentACS&quot;</span></span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>))</span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>acs <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">system.file</span>(</span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>  <span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;sample_alabama_subset.rds&quot;</span>, <span class="at">package =</span> <span class="st">&quot;catchmentACS&quot;</span></span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a>))</span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a>iso_07 <span class="ot">&lt;-</span> iso[iso<span class="sc">$</span>site_id <span class="sc">==</span> <span class="st">&quot;AL_SITE_07&quot;</span>, ]</span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a>site_07 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">site_id =</span> <span class="st">&quot;AL_SITE_07&quot;</span>, <span class="at">lon =</span> <span class="sc">-</span><span class="fl">85.365</span>, <span class="at">lat =</span> <span class="fl">31.655</span>)</span></code></pre></div>
+<div id="the-value-of-the-expression-in-cacs_capture_conditions" class="section level2">
+<h2>The value of the expression in
+<code>cacs_capture_conditions()</code></h2>
+<p><code>cacs_capture_conditions()</code> evaluates an expression and
+returns a table of the messages and warnings of catchmentACS given while
+it runs. In 0.3 it returned only that table. An assignment inside the
+expression, as in
+<code>cacs_capture_conditions(result &lt;- cacs_run(site_07, state = &quot;AL&quot;))</code>,
+does not keep the value, because the expression is evaluated in a new
+environment.</p>
+<p>From 0.4 on, <code>return_value = &quot;both&quot;</code> returns a list with
+the value of the expression, <code>result</code>, and the table,
+<code>conditions</code>:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>out <span class="ot">&lt;-</span> <span class="fu">cacs_capture_conditions</span>(</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>  <span class="fu">cacs_run</span>(site_07, <span class="at">state =</span> <span class="st">&quot;AL&quot;</span>,</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>           <span class="at">precomputed_isochrones =</span> iso_07, <span class="at">acs =</span> acs),</span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>  <span class="at">return_value =</span> <span class="st">&quot;both&quot;</span></span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>)</span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>result <span class="ot">&lt;-</span> out<span class="sc">$</span>result</span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a><span class="fu">table</span>(out<span class="sc">$</span>conditions<span class="sc">$</span>class)</span></code></pre></div>
+<pre><code>#&gt; 
+#&gt;         catchmentACS_message_progress catchmentACS_message_progress_summary 
+#&gt;                                     5                                     3</code></pre>
+<p>The captured conditions here are the progress messages of
+<code>cacs_run()</code>, which are not shown. The default is still
+<code>return_value = &quot;conditions&quot;</code>, and
+<code>options(catchmentACS.capture_return_value = &quot;both&quot;)</code> changes
+it for the session.</p>
+<p>The approach used with 0.3, an assignment with <code>&lt;&lt;-</code>
+inside the expression, still works. R assigns the value to the first
+variable of that name that it finds, searching from the environment in
+which <code>cacs_capture_conditions()</code> is called, and creates the
+variable in the global environment when there is none
+(<code>?assignOps</code>). Inside a function, creating the variable
+first, as with <code>result &lt;- NULL</code>, keeps the value in the
+function.</p>
+</div>
+<div id="drive-time-areas-built-on-the-public-osrm-server" class="section level2">
+<h2>Drive-time areas built on the public OSRM server</h2>
+<p>With the Open Source Routing Machine (OSRM), the default routing
+service, <code>cacs_isochrone()</code> used <code>res = 70L</code> in
+0.3 when <code>res</code> was not given. Since 0.4, it uses
+<code>res = 30L</code> with <code>osrm_mode = &quot;demo&quot;</code>, the
+default, which sends the requests to the public OSRM demo server, and
+still <code>res = 70L</code> with <code>osrm_mode = &quot;docker&quot;</code>.</p>
+<p>The coarser grid sends fewer requests, so the demo server is less
+likely to respond with HTTP status 429 (too many requests), but it can
+give different areas, and so different estimates. To keep the grid of a
+0.3 script, set <code>res = 70L</code> in the call to
+<code>cacs_isochrone()</code>, or
+<code>iso_args = list(res = 70L)</code> in <code>cacs_run()</code>:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="co"># Needs the osrm package and an internet connection.</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>iso_70 <span class="ot">&lt;-</span> <span class="fu">cacs_isochrone</span>(site_07, <span class="at">drive_times =</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">10</span>, <span class="dv">15</span>), <span class="at">res =</span> <span class="dv">70</span><span class="dt">L</span>)</span></code></pre></div>
+<p><code>options(catchmentACS.osrm_demo_budget_protect = FALSE)</code>
+makes <code>res = 70L</code> the default with both values of
+<code>osrm_mode</code>. <code>cacs_validate_osrm_endpoint()</code>,
+added in 0.4, checks whether an OSRM server is accepting requests before
+the areas are built. <code>?cacs_isochrone</code> describes the grid and
+the waiting time on the demo server, and
+<code>vignette(&quot;providers&quot;, package = &quot;catchmentACS&quot;)</code> describes
+the servers and this check.</p>
+</div>
+<div id="the-isochrone-column-of-the-list-column-form" class="section level2">
+<h2>The <code>isochrone</code> column of the list-column form</h2>
+<p>With <code>output = &quot;list_column&quot;</code>, <code>cacs_run()</code>
+returns a row for each site and drive time, with the ACS estimates and
+the rates in list-columns of tibbles. In 0.3, its column
+<code>isochrone</code> held <code>NULL</code>. Since 0.4, it holds the
+drive-time area of the row, as a one-row sf object, when the areas are
+supplied through <code>precomputed_isochrones</code>, and since 0.5.0
+also when <code>cacs_run()</code> builds them:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>by_area <span class="ot">&lt;-</span> <span class="fu">cacs_run</span>(</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>  site_07, <span class="at">state =</span> <span class="st">&quot;AL&quot;</span>, <span class="at">precomputed_isochrones =</span> iso_07, <span class="at">acs =</span> acs,</span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>  <span class="at">output =</span> <span class="st">&quot;list_column&quot;</span>, <span class="at">verbose =</span> <span class="cn">FALSE</span></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>)</span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a><span class="fu">class</span>(by_area<span class="sc">$</span>isochrone[[<span class="dv">1</span>]])</span></code></pre></div>
+<pre><code>#&gt; [1] &quot;sf&quot;         &quot;tbl_df&quot;     &quot;tbl&quot;        &quot;data.frame&quot;</code></pre>
+<p>The same holds for the element <code>list_column</code> of the result
+with <code>output = &quot;both&quot;</code>. Code that kept the areas next to the
+result, for example to map them, can take them from this column.</p>
+</div>
+<div id="the-row-order-of-as_tibble" class="section level2">
+<h2>The row order of <code>as_tibble()</code></h2>
+<p>In 0.3, <code>tibble::as_tibble()</code> returned the rows of a
+result of <code>cacs_run()</code> in their order. Versions 0.4 to 0.5.1
+sorted them by <code>site_id</code>, <code>drive_time_min</code>, and
+<code>variable</code>, with the rows of the five rates first for each
+site and drive time. Version 0.6.0 keeps the rows in their order again,
+and <code>rate_first = TRUE</code> sorts them in the same way as 0.4 to
+0.5.1:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="fu">head</span>(tibble<span class="sc">::</span><span class="fu">as_tibble</span>(result)<span class="sc">$</span>variable)</span></code></pre></div>
+<pre><code>#&gt; [1] &quot;B01003_001&quot; &quot;B11001_001&quot; &quot;B17001_001&quot; &quot;B17001_002&quot; &quot;B19013_001&quot;
+#&gt; [6] &quot;B19056_001&quot;</code></pre>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="fu">head</span>(tibble<span class="sc">::</span><span class="fu">as_tibble</span>(result, <span class="at">rate_first =</span> <span class="cn">TRUE</span>)<span class="sc">$</span>variable)</span></code></pre></div>
+<pre><code>#&gt; [1] &quot;labor_force_participation&quot; &quot;poverty_rate&quot;             
+#&gt; [3] &quot;snap_rate&quot;                 &quot;ssi_rate&quot;                 
+#&gt; [5] &quot;unemp_rate&quot;                &quot;B01003_001&quot;</code></pre>
+<p>Code written for 0.3 that selects rows by their position after
+<code>tibble::as_tibble()</code> gets them in the order of the result,
+as it did with 0.3.
+<code>options(catchmentACS.rate_first_default = TRUE)</code> makes
+<code>tibble::as_tibble()</code> put the rate rows first without
+<code>rate_first</code>, but only when it is called from code run in the
+global environment, such as the console, a script, or a document; a
+message says so the first time in a session.</p>
+<p>Functions of other packages that convert a result with
+<code>tibble::as_tibble()</code> keep the order, even with that option,
+so <code>dplyr::left_join()</code>, <code>dplyr::semi_join()</code>,
+<code>dplyr::anti_join()</code>, <code>tidyr::pivot_wider()</code>, and
+<code>dplyr::summarise()</code> or <code>dplyr::reframe()</code> after
+<code>dplyr::rowwise()</code> work on a result as on any other table
+(<code>?as_tibble.cacs_run_result</code>). In 0.4 to 0.5.1, these
+functions got the sorted rows unless
+<code>options(catchmentACS.rate_first_default = FALSE)</code> was set.
+<code>dplyr::semi_join()</code> and <code>dplyr::anti_join()</code>
+could then return the wrong rows, and summaries after
+<code>dplyr::rowwise()</code> with grouping variables could have the
+wrong labels, without a warning; such results should be computed
+again.</p>
+</div>
+<div id="rates-by-site-in-summary-print-and-markdown-tables" class="section level2">
+<h2>Rates by site in <code>summary()</code>, <code>print()</code>, and
+Markdown tables</h2>
+<p>From 0.4 on, <code>summary()</code> of a result also has the elements
+<code>rates_per_site</code> and <code>rates_per_site_moe</code>, tables
+of the five rates with a row for each site and drive time
+(<code>site_id</code> and <code>drive_time_min</code>). In
+<code>rates_per_site_moe</code>, each cell gives the estimate and its
+margin of error (MOE), the half-width of its confidence interval at the
+90 percent level by default. <code>print()</code> shows the first table
+for results with at most
+<code>getOption(&quot;catchmentACS.summary_per_site_max&quot;)</code> sites, 12 by
+default, and <code>cacs_summary_as_markdown()</code> formats either
+table as Markdown:</p>
+<div style="overflow-x: auto;">
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="fu">cacs_summary_as_markdown</span>(<span class="fu">summary</span>(result)<span class="sc">$</span>rates_per_site_moe)</span></code></pre></div>
+<table>
+<caption>Rates per site (estimate ± 90% MOE)</caption>
+<colgroup>
+<col width="10%" />
+<col width="13%" />
+<col width="12%" />
+<col width="12%" />
+<col width="12%" />
+<col width="12%" />
+<col width="24%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">site_id</th>
+<th align="right">drive_time_min</th>
+<th align="left">poverty_rate</th>
+<th align="left">snap_rate</th>
+<th align="left">ssi_rate</th>
+<th align="left">unemp_rate</th>
+<th align="left">labor_force_participation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">AL_SITE_07</td>
+<td align="right">5</td>
+<td align="left">0.618 ± 0.104</td>
+<td align="left">0.040 ± 0.006</td>
+<td align="left">0.167 ± 0.037</td>
+<td align="left">0.062 ± 0.015</td>
+<td align="left">0.851 ± 0.115</td>
+</tr>
+<tr class="even">
+<td align="left">AL_SITE_07</td>
+<td align="right">10</td>
+<td align="left">0.602 ± 0.098</td>
+<td align="left">0.043 ± 0.006</td>
+<td align="left">0.165 ± 0.036</td>
+<td align="left">0.063 ± 0.015</td>
+<td align="left">0.846 ± 0.112</td>
+</tr>
+<tr class="odd">
+<td align="left">AL_SITE_07</td>
+<td align="right">15</td>
+<td align="left">0.360 ± 0.047</td>
+<td align="left">0.111 ± 0.012</td>
+<td align="left">0.124 ± 0.017</td>
+<td align="left">0.092 ± 0.012</td>
+<td align="left">0.726 ± 0.096</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>None of these additions requires a change to 0.3 code.</p>
+</div>
+<div id="values-in-rates_breakdown-before-0.4" class="section level2">
+<h2>Values in <code>rates_breakdown</code> before 0.4</h2>
+<p>In 0.2 and 0.3, the rows of the element <code>rates_breakdown</code>
+of <code>summary()</code> were shifted by one: the mean, standard
+deviation, and count of missing values shown for each rate belonged to
+another rate. Since 0.4, <code>dplyr::group_by()</code> has a method for
+results of <code>cacs_run()</code>, which have the class
+<code>cacs_run_result</code>:
+<code>group_by(cacs_run_result, ...)</code> removes that class before
+grouping, so tables summarized from a result are ordinary tibbles
+(<code>?group_by.cacs_run_result</code>). Values from
+<code>rates_breakdown</code> reported with 0.2 or 0.3 need to be
+computed again.</p>
+</div>
+
+
+
+<!-- code folding -->
+
+
+
+</body>
+</html>
